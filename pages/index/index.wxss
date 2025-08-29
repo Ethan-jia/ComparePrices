@@ -1,0 +1,278 @@
+/* index.wxss */
+.container {
+  padding: 16px;
+  background-color: #F2F2F7;
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 搜索栏 */
+.search-section {
+  background: #FFFFFF;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #E5E5EA;
+  flex-shrink: 0;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-box {
+  flex: 1;
+  position: relative;
+  background: #F2F2F7;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.search-input {
+  flex: 1;
+  height: 40px;
+  font-size: 16px;
+  color: #000000;
+}
+
+.search-icon {
+  font-size: 16px;
+  color: #8A8A8A;
+  margin-right: 8px;
+}
+
+.clear-btn {
+  font-size: 16px;
+  color: #8A8A8A;
+  padding: 4px;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: #007AFF;
+  color: #FFFFFF;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.filter-icon {
+  font-size: 12px;
+}
+
+/* 筛选面板 */
+.filter-panel {
+  background: #FFFFFF;
+  padding: 16px;
+  border-bottom: 1px solid #E5E5EA;
+  flex-shrink: 0;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.category-item {
+  padding: 8px 16px;
+  background: #F2F2F7;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #8A8A8A;
+  border: 1px solid transparent;
+}
+
+.category-item.active {
+  background: #007AFF;
+  color: #FFFFFF;
+}
+
+/* 商品列表 */
+.product-list {
+  flex: 1;
+  padding: 0;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.empty-text {
+  font-size: 18px;
+  color: #8A8A8A;
+  margin-bottom: 8px;
+}
+
+.empty-hint {
+  font-size: 14px;
+  color: #C7C7CC;
+}
+
+/* 商品卡片容器 */
+.product-card-container {
+  position: relative;
+  margin-bottom: 12px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.product-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transition: transform 0.3s ease;
+  transform: translateX(0);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.product-card.swiping {
+  transform: translateX(-80px);
+}
+
+.product-info {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.product-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-meta {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.product-date, .product-location {
+  font-size: 12px;
+  color: #8A8A8A;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 80px;
+}
+
+.product-category {
+  font-size: 12px;
+  color: #007AFF;
+  background: rgba(0, 122, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.product-price {
+  text-align: right;
+  min-width: 70px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.current-price {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+
+.original-price {
+  font-size: 11px;
+  color: #8A8A8A;
+  text-decoration: line-through;
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+
+.discount {
+  font-size: 11px;
+  color: #34C759;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* 左滑删除按钮 */
+.delete-btn {
+  position: absolute;
+  top: 0;
+  right: -80px;
+  width: 80px;
+  height: 100%;
+  background: #FF3B30;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  transition: right 0.3s ease;
+  z-index: 10;
+}
+
+.product-card-container .product-card.swiping + .delete-btn {
+  right: 0;
+}
+
+/* 悬浮添加按钮 */
+.fab {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  background: #007AFF;
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+  z-index: 1000;
+}
+
+.fab-icon {
+  font-size: 24px;
+  color: #FFFFFF;
+  font-weight: 300;
+}
+
+.fab:active {
+  transform: scale(0.95);
+}

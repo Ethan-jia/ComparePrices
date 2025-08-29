@@ -1,0 +1,111 @@
+<!--statistics.wxml-->
+<navigation-bar title="数据统计" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+
+<view class="container">
+  <!-- 时间段选择 -->
+  <view class="period-selector">
+    <view 
+      wx:for="{{periods}}" 
+      wx:key="value"
+      class="period-item {{selectedPeriod === item.value ? 'active' : ''}}"
+      data-period="{{item.value}}"
+      bindtap="onPeriodChange"
+    >
+      {{item.label}}
+    </view>
+  </view>
+
+  <!-- 基础统计卡片 -->
+  <view class="stats-cards">
+    <view class="stat-card" bindtap="showDevModal">
+      <view class="stat-icon">📦</view>
+      <view class="stat-value">{{totalProducts}}</view>
+      <view class="stat-label">商品总数</view>
+    </view>
+    <view class="stat-card" bindtap="showDevModal">
+      <view class="stat-icon">💰</view>
+      <view class="stat-value">¥{{totalSpent}}</view>
+      <view class="stat-label">消费总额</view>
+    </view>
+    <view class="stat-card" bindtap="showDevModal">
+      <view class="stat-icon">📊</view>
+      <view class="stat-value">¥{{averagePrice}}</view>
+      <view class="stat-label">平均价格</view>
+    </view>
+  </view>
+
+  <!-- 分类统计 -->
+  <view class="section-card" wx:if="{{categoryStats.length > 0}}">
+    <view class="section-title">分类统计</view>
+    <view class="category-stats">
+      <view 
+        wx:for="{{categoryStats}}" 
+        wx:key="category"
+        class="category-stat-item"
+      >
+        <view class="category-info">
+          <view class="category-name">{{item.category}}</view>
+          <view class="category-count">{{item.count}}件商品</view>
+        </view>
+        <view class="category-amount">
+          <view class="amount-value">¥{{item.totalSpent}}</view>
+          <view class="amount-avg">平均¥{{item.averagePrice}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 月度统计 -->
+  <view class="section-card" wx:if="{{monthlyStats.length > 0}}">
+    <view class="section-title">月度消费</view>
+    <view class="monthly-stats">
+      <view 
+        wx:for="{{monthlyStats}}" 
+        wx:key="month"
+        class="monthly-stat-item"
+      >
+        <view class="month-label">{{item.month}}</view>
+        <view class="month-bar">
+          <view 
+            class="month-bar-fill" 
+            style="width: {{item.barWidth}}%"
+          ></view>
+        </view>
+        <view class="month-amount">¥{{item.totalSpent}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最近商品 -->
+  <view class="section-card" wx:if="{{recentProducts.length > 0}}">
+    <view class="section-title">最近添加</view>
+    <view class="recent-products">
+      <view 
+        wx:for="{{recentProducts}}" 
+        wx:key="id"
+        class="recent-product-item"
+        data-id="{{item.id}}"
+        bindtap="goToProductDetail"
+      >
+        <view class="product-info">
+          <view class="product-name">{{item.name}}</view>
+          <view class="product-meta">{{item.date}} · {{item.location}}</view>
+        </view>
+        <view class="product-price">¥{{item.currentPrice}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:if="{{totalProducts === 0}}" class="empty-state">
+    <view class="empty-icon">📊</view>
+    <view class="empty-text">暂无统计数据</view>
+    <view class="empty-hint">添加商品后即可查看统计信息</view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <!-- <view class="action-buttons"> -->
+  <!--   <button class="action-btn btn-export" bindtap="exportData">导出数据</button> -->
+  <!--   <button class="action-btn btn-clear" bindtap="clearData">清空数据</button> -->
+  <!-- </view> -->
+</view>

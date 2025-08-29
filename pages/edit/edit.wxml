@@ -1,0 +1,85 @@
+<navigation-bar title="编辑商品" back="true" color="black" background="#FFF"></navigation-bar>
+<view class="container">
+  <form class="form">
+    <!-- 商品名称 -->
+    <view class="form-group">
+      <view class="form-label">商品名称 <text class="required">*</text></view>
+      <input 
+        class="form-input" 
+        placeholder="请输入商品名称" 
+        value="{{productName}}"
+        bindinput="onNameInput"
+      />
+    </view>
+    <!-- 购买日期 -->
+    <view class="form-group">
+      <view class="form-label">购买日期 <text class="required">*</text></view>
+      <picker 
+        mode="date" 
+        value="{{purchaseDate}}" 
+        bindchange="onDateChange"
+      >
+        <view class="picker-input">
+          <text class="picker-text">{{purchaseDate || '请选择日期'}}</text>
+          <text class="picker-arrow">></text>
+        </view>
+      </picker>
+    </view>
+    <!-- 购买地点 -->
+    <view class="form-group">
+      <view class="form-label">购买地点 <text class="required">*</text></view>
+      <input 
+        class="form-input" 
+        placeholder="请输入购买地点" 
+        value="{{location}}"
+        bindinput="onLocationInput"
+      />
+    </view>
+    <!-- 价格信息（并排对齐） -->
+    <view class="form-group" style="display: flex; gap: 12px;">
+      <view style="flex:1;">
+        <view class="form-label">现价 <text class="required">*</text></view>
+        <view class="price-input-wrapper">
+          <text class="price-symbol">¥</text>
+          <input 
+            class="form-input price-input" 
+            type="digit"
+            placeholder="0.00" 
+            value="{{currentPrice}}"
+            bindinput="onCurrentPriceInput"
+          />
+        </view>
+      </view>
+      <view style="flex:1;">
+        <view class="form-label">原价 <text class="optional">(可选)</text></view>
+        <view class="price-input-wrapper">
+          <text class="price-symbol">¥</text>
+          <input 
+            class="form-input price-input" 
+            type="digit"
+            placeholder="0.00" 
+            value="{{originalPrice}}"
+            bindinput="onOriginalPriceInput"
+          />
+        </view>
+      </view>
+    </view>
+    <!-- 备注信息 -->
+    <view class="form-group">
+      <view class="form-label">备注 <text class="optional">(可选)</text></view>
+      <textarea 
+        class="form-textarea" 
+        placeholder="添加备注信息..." 
+        value="{{note}}"
+        bindinput="onNoteInput"
+        maxlength="200"
+      ></textarea>
+      <view class="textarea-counter">{{note.length}}/200</view>
+    </view>
+    <!-- 操作按钮 -->
+    <view class="form-actions">
+  <button class="btn btn-secondary" bindtap="clearForm">清空</button>
+  <button class="btn btn-primary" bindtap="saveProduct">保存修改</button>
+    </view>
+  </form>
+</view>

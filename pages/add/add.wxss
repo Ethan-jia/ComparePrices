@@ -1,0 +1,249 @@
+/* add.wxss */
+.container {
+  padding: 16px;
+  background-color: #F2F2F7;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.form {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  padding: 0 20px;
+}
+
+.form-group:first-child {
+  padding-top: 20px;
+}
+
+.form-group:last-child {
+  padding-bottom: 20px;
+}
+
+.form-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #000000;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.required {
+  color: #FF3B30;
+}
+
+.optional {
+  color: #8A8A8A;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.form-input {
+  width: 100%;
+  height: 44px;
+  border: 1px solid #E5E5EA;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 16px;
+  color: #000000;
+  background: #FFFFFF;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.form-input:focus {
+  border-color: #007AFF;
+}
+
+.picker-input {
+  width: 100%;
+  height: 44px;
+  border: 1px solid #E5E5EA;
+  border-radius: 8px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  box-sizing: border-box;
+}
+
+.picker-text {
+  font-size: 16px;
+  color: #000000;
+}
+
+.picker-arrow {
+  font-size: 16px;
+  color: #8A8A8A;
+}
+
+/* 价格输入区域 */
+
+
+.price-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.price-symbol {
+  position: absolute;
+  left: 12px;
+  font-size: 16px;
+  color: #000000;
+  z-index: 1;
+}
+
+.price-input {
+  padding-left: 28px;
+}
+
+/* 文本域 */
+.form-textarea {
+  width: 100%;
+  min-height: 80px;
+  border: 1px solid #E5E5EA;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 16px;
+  color: #000000;
+  background: #FFFFFF;
+  box-sizing: border-box;
+  resize: none;
+  outline: none;
+}
+
+.form-textarea:focus {
+  border-color: #007AFF;
+}
+
+.textarea-counter {
+  text-align: right;
+  font-size: 12px;
+  color: #8A8A8A;
+  margin-top: 4px;
+}
+
+/* 操作按钮 */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  background: #FFFFFF;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+  flex: 1;
+  height: 44px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+.btn-primary {
+  background: #007AFF;
+  color: #FFFFFF;
+}
+
+.btn-primary:active {
+  background: #0056CC;
+}
+
+.btn-secondary {
+  background: #F2F2F7;
+  color: #8A8A8A;
+}
+
+.btn-secondary:active {
+  background: #E5E5EA;
+}
+
+/* 分类选择器 */
+.category-picker {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.picker-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.picker-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  border-radius: 12px 12px 0 0;
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #E5E5EA;
+}
+
+.picker-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.picker-close {
+  font-size: 20px;
+  color: #8A8A8A;
+  padding: 4px;
+}
+
+.picker-body {
+  flex: 1;
+  padding: 16px 20px;
+  overflow-y: auto;
+}
+
+.picker-item {
+  padding: 16px 0;
+  font-size: 16px;
+  color: #000000;
+  border-bottom: 1px solid #F2F2F7;
+  text-align: center;
+}
+
+.picker-item:last-child {
+  border-bottom: none;
+}
+
+.picker-item.active {
+  color: #007AFF;
+  font-weight: 500;
+}

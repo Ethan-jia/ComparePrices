@@ -1,0 +1,322 @@
+/* detail.wxss */
+.container {
+  padding: 16px;
+  background-color: #F2F2F7;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 商品信息卡片 */
+.product-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-header {
+  margin-bottom: 16px;
+}
+
+.product-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 8px;
+}
+
+.product-category {
+  font-size: 14px;
+  color: #007AFF;
+  background: rgba(0, 122, 255, 0.1);
+  padding: 4px 12px;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-row {
+  display: flex;
+  gap: 16px;
+}
+
+.info-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-item.full-width {
+  flex: none;
+  width: 100%;
+}
+
+.info-label {
+  font-size: 14px;
+  color: #8A8A8A;
+}
+
+.info-value {
+  font-size: 16px;
+  color: #000000;
+  font-weight: 500;
+}
+
+/* 价格信息卡片 */
+
+/* 价格信息样式（合并到商品卡片右上角） */
+.current-price {
+  font-size: 24px;
+  font-weight: 600;
+  color: #007AFF;
+  text-align: right;
+}
+.original-price {
+  font-size: 14px;
+  color: #8A8A8A;
+  text-decoration: line-through;
+  text-align: right;
+}
+.discount-badge {
+  background: #34C759;
+  color: #FFFFFF;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: right;
+}
+
+.savings-info {
+  padding: 8px 12px;
+  background: rgba(52, 199, 89, 0.1);
+  border-radius: 8px;
+}
+
+.savings-text {
+  font-size: 14px;
+  color: #34C759;
+  font-weight: 500;
+}
+
+/* 价格趋势图卡片 */
+.chart-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.chart-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.chart-subtitle {
+  font-size: 14px;
+  color: #8A8A8A;
+}
+
+.chart-container {
+  position: relative;
+  height: 120px;
+  margin: 20px 0;
+}
+
+.chart-line {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.chart-point {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+}
+
+.point-value {
+  background: #FFFFFF;
+  border: 2px solid #007AFF;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #007AFF;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+.point-date {
+  font-size: 10px;
+  color: #8A8A8A;
+  white-space: nowrap;
+}
+
+.chart-point.current .point-value {
+  background: #007AFF;
+  color: #FFFFFF;
+}
+
+.chart-connections {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #E5E5EA;
+  transform: translateY(-50%);
+}
+
+.connection-line {
+  position: absolute;
+  height: 100%;
+  background: #007AFF;
+  top: 0;
+}
+
+/* 价格历史列表卡片 */
+.history-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.history-header {
+  margin-bottom: 16px;
+}
+
+.history-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: #F2F2F7;
+  border-radius: 8px;
+  position: relative;
+}
+
+.history-item.current {
+  background: rgba(0, 122, 255, 0.1);
+  border: 1px solid #007AFF;
+}
+
+.history-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.history-date {
+  font-size: 14px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.history-location {
+  font-size: 12px;
+  color: #8A8A8A;
+}
+
+.history-price {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  margin-right: 8px;
+}
+
+.current-indicator {
+  background: #007AFF;
+  color: #FFFFFF;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+/* 操作按钮 */
+.action-section {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  padding-bottom: 32px;
+}
+
+.action-btn {
+  flex: 1;
+  height: 44px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-edit {
+  background: #007AFF;
+  color: #FFFFFF;
+}
+
+.btn-edit:active {
+  background: #0056CC;
+}
+
+
+
+.btn-delete {
+  background: #FF3B30;
+  color: #FFFFFF;
+}
+
+.btn-delete:active {
+  background: #DC3545;
+}
+
+/* 加载状态 */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.loading-text {
+  font-size: 16px;
+  color: #8A8A8A;
+}

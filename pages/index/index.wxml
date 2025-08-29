@@ -1,0 +1,93 @@
+<!--index.wxml-->
+<navigation-bar title="比价助手" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-section">
+    <view class="search-box">
+      <input 
+        class="search-input" 
+        placeholder="搜索商品，如：牛奶" 
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+      />
+      <view class="search-icon">🔍</view>
+      <view wx:if="{{searchKeyword}}" class="clear-btn" bindtap="clearSearch">✕</view>
+    </view>
+    <view class="filter-btn" bindtap="toggleFilter">
+      <text>筛选</text>
+      <text class="filter-icon">▼</text>
+    </view>
+  </view>
+
+  <!-- 筛选面板 -->
+  <view class="filter-panel" wx:if="{{showFilter}}">
+    <view class="category-list">
+      <view 
+        wx:for="{{categories}}" 
+        wx:key="*this"
+        class="category-item {{selectedCategory === item ? 'active' : ''}}"
+        data-category="{{item}}"
+        bindtap="selectCategory"
+      >
+        {{item}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 商品列表 -->
+  <view class="product-list">
+    <view wx:if="{{filteredProducts.length === 0}}" class="empty-state">
+      <view class="empty-icon">📦</view>
+      <view class="empty-text">暂无商品记录</view>
+      <view class="empty-hint">点击下方按钮添加第一个商品</view>
+    </view>
+    
+    <view 
+      wx:for="{{filteredProducts}}" 
+      wx:key="id"
+      class="product-card-container"
+    >
+      <view 
+        class="product-card {{item.swiping ? 'swiping' : ''}}"
+        data-index="{{index}}"
+        bindtouchstart="onTouchStart"
+        bindtouchmove="onTouchMove"
+        bindtouchend="onTouchEnd"
+        bindtap="goToDetail"
+      >
+        <view class="product-info">
+          <view class="product-name">{{item.name}}</view>
+          <view class="product-meta">
+            <text class="product-date">{{item.date}}</text>
+            <text class="product-location">{{item.location}}</text>
+          </view>
+          <!-- <view class="product-category">{{item.category}}</view> -->
+        </view>
+        
+        <view class="product-price">
+          <view class="current-price">¥{{item.currentPrice}}</view>
+          <view wx:if="{{item.originalPrice}}" class="original-price">¥{{item.originalPrice}}</view>
+          <view wx:if="{{item.showDiscount}}" class="discount">
+            省¥{{item.savedAmount}}
+          </view>
+        </view>
+      </view>
+      
+      <view 
+        class="delete-btn" 
+        data-index="{{index}}"
+        catchtap="deleteProduct"
+      >
+        删除
+      </view>
+    </view>
+  </view>
+
+  <!-- 悬浮添加按钮 -->
+  <view class="fab" bindtap="goToAdd">
+    <text class="fab-icon">+</text>
+  </view>
+
+
+</view>
