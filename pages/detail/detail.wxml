@@ -1,0 +1,94 @@
+<!--detail.wxml-->
+<navigation-bar title="商品详情" back="{{true}}" color="black" background="#FFF"></navigation-bar>
+
+<view class="container" wx:if="{{product}}">
+
+  <!-- 商品信息卡片（含价格） -->
+  <view class="product-card">
+    <view class="product-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <view>
+        <view class="product-title">{{product.name}}</view>
+        <!-- <view class="product-category">{{product.category}}</view> -->
+      </view>
+      <view style="display: flex; flex-direction: column; align-items: flex-end;">
+        <view class="current-price" style="font-size: 24px; color: #007AFF; font-weight: bold;">¥{{product.currentPrice}}</view>
+        <view wx:if="{{product.originalPrice}}" class="original-price" style="font-size: 14px; color: #8A8A8A; text-decoration: line-through;">¥{{product.originalPrice}}</view>
+      </view>
+    </view>
+    <view class="product-info">
+      <view class="info-row">
+        <view class="info-item">
+          <text class="info-label">购买日期</text>
+          <text class="info-value">{{product.date}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">购买地点</text>
+          <text class="info-value">{{product.location}}</text>
+        </view>
+      </view>
+      <view wx:if="{{product.note}}" class="info-row">
+        <view class="info-item full-width">
+          <text class="info-label">备注</text>
+          <text class="info-value">{{product.note}}</text>
+        </view>
+      </view>
+      <view wx:if="{{showSavings}}" class="savings-info" style="margin-top: 8px; display: flex; align-items: center;">
+        <text class="savings-text">节省了 ¥{{savingsAmount}}</text>
+        <view wx:if="{{showDiscount}}" class="discount-badge" style="margin-left: 8px;">省{{discountPercent}}%</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 价格趋势折线图（canvas重绘） -->
+  <view class="chart-card" wx:if="{{priceHistory.length > 1}}">
+    <view class="chart-header">
+      <text class="chart-title">价格趋势</text>
+      <text class="chart-subtitle">{{priceHistory.length}}次记录</text>
+    </view>
+    <view class="chart-container" style="height: 140px; position: relative;">
+      <canvas canvas-id="trendCanvas" id="trendCanvas" style="width: 300px; height: 140px; background: #F2F2F7; border-radius: 8px;"></canvas>
+      <block wx:for="{{priceHistory}}" wx:key="id">
+        <cover-view
+          style="position: absolute; width: 24px; height: 24px; left: {{item.x-12}}px; top: {{item.y-12}}px; z-index: 10; background: transparent;"
+          data-id="{{item.id}}"
+          bindtap="onTrendPointTap"
+        ></cover-view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 价格历史列表 -->
+  <view class="history-card" wx:if="{{priceHistory.length > 1}}">
+    <view class="history-header">
+      <text class="history-title">价格记录</text>
+    </view>
+    
+    <view class="history-list">
+      <view 
+        wx:for="{{priceHistory}}" 
+        wx:key="id"
+        class="history-item {{item.isCurrent ? 'current' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onHistoryItemTap"
+      >
+        <view class="history-info">
+          <view class="history-date">{{item.date}}</view>
+          <view class="history-location">{{item.location}}</view>
+        </view>
+        <view class="history-price">¥{{item.currentPrice}}</view>
+        <view wx:if="{{item.isCurrent}}" class="current-indicator">当前</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-section">
+    <button class="action-btn btn-edit" bindtap="editProduct">编辑</button>
+    <button class="action-btn btn-delete" bindtap="deleteProduct">删除</button>
+  </view>
+</view>
+
+<!-- 加载状态 -->
+<view class="loading" wx:else>
+  <view class="loading-text">加载中...</view>
+</view>

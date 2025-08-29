@@ -1,0 +1,285 @@
+/* statistics.wxss */
+.container {
+  padding: 16px;
+  background-color: #F2F2F7;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding-bottom: 100px; /* 为底部按钮留出空间 */
+}
+
+/* 时间段选择器 */
+.period-selector {
+  display: flex;
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.period-item {
+  flex: 1;
+  text-align: center;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #8A8A8A;
+  transition: all 0.2s;
+}
+
+.period-item.active {
+  background: #007AFF;
+  color: #FFFFFF;
+}
+
+/* 统计卡片 */
+.stats-cards {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  flex: 1;
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #8A8A8A;
+}
+
+/* 内容卡片 */
+.section-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 16px;
+}
+
+/* 分类统计 */
+.category-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.category-stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #F2F2F7;
+  border-radius: 8px;
+}
+
+.category-info {
+  flex: 1;
+}
+
+.category-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #000000;
+  margin-bottom: 4px;
+}
+
+.category-count {
+  font-size: 12px;
+  color: #8A8A8A;
+}
+
+.category-amount {
+  text-align: right;
+}
+
+.amount-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 2px;
+}
+
+.amount-avg {
+  font-size: 12px;
+  color: #8A8A8A;
+}
+
+/* 月度统计 */
+.monthly-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.monthly-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.month-label {
+  font-size: 14px;
+  color: #8A8A8A;
+  min-width: 60px;
+}
+
+.month-bar {
+  flex: 1;
+  height: 8px;
+  background: #F2F2F7;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.month-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #007AFF, #34C759);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.month-amount {
+  font-size: 14px;
+  font-weight: 500;
+  color: #000000;
+  min-width: 80px;
+  text-align: right;
+}
+
+/* 最近商品 */
+.recent-products {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.recent-product-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #F2F2F7;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.recent-product-item:active {
+  background: #E5E5EA;
+}
+
+.product-info {
+  flex: 1;
+}
+
+.product-name {
+  font-size: 16px;
+  color: #000000;
+  margin-bottom: 4px;
+}
+
+.product-meta {
+  font-size: 12px;
+  color: #8A8A8A;
+}
+
+.product-price {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.empty-text {
+  font-size: 18px;
+  color: #8A8A8A;
+  margin-bottom: 8px;
+}
+
+.empty-hint {
+  font-size: 14px;
+  color: #C7C7CC;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  position: fixed;
+  bottom: 20px;
+  left: 16px;
+  right: 16px;
+  background: #FFFFFF;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.action-btn {
+  flex: 1;
+  height: 44px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-export {
+  background: #007AFF;
+  color: #FFFFFF;
+}
+
+.btn-export:active {
+  background: #0056CC;
+}
+
+.btn-clear {
+  background: #FF3B30;
+  color: #FFFFFF;
+}
+
+.btn-clear:active {
+  background: #DC3545;
+}
