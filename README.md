@@ -1,5 +1,3 @@
-
-
 <div align="center">
 	<img src="./小程序二维码.jpg" alt="ComparePrices小程序二维码" width="180" />
 	<br />
@@ -64,6 +62,17 @@ app.js/json/wxss  # 全局配置 / Global config
 - No test data on first launch, all data is user-created and stored locally.
 
 
+
+## 更新日志 | Changelog
+
+### 版本 1.0.2 | Version 1.0.2
+
+- **特价价格颜色更改**：特价价格使用更明显的颜色，便于用户快速识别。
+- **条目折叠**：实现了条目折叠功能，点击后才显示详情。
+- **历史记录功能**：在添加和编辑页面中，为商品名称和购买地点增加了历史记录建议。
+- **货币选择**：支持用户选择不同的货币。
+- **品牌字段**：新增了品牌字段。
+- **筛选功能**：支持按品牌和店铺进行筛选。
 
 ---
 
