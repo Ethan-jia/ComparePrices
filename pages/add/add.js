@@ -1,29 +1,110 @@
 // add.js
+const { createProduct } = require('../../models/product');
+const { getAllProductNames, getAllLocations, getAllBrands } = require('../../services/fieldService');
+const {
+    CURRENCIES,
+    getDefaultCurrency,
+    getCurrencyByIndex,
+    savePreferredCurrency,
+    getPreferredCurrencyIndex
+} = require('../../services/currencyService');
+const autoComplete = require('../../utils/autoComplete');
 Page({
+    // 输入商品名，支持下拉筛选
+    onProductNameInput: function (e) {
+        const input = e.detail.value;
+        const filtered = this.data.allProductNames.filter(name => name.indexOf(input) !== -1);
+        this.setData({
+            productName: input,
+            filteredProductNames: filtered,
+            showProductNameDropdown: !!(filtered.length && input)
+        });
+    },
+
+    // 选中下拉商品名
+    onSelectProductName: function (e) {
+        const name = e.currentTarget.dataset.name;
+        this.setData({
+            productName: name,
+            showProductNameDropdown: false
+        });
+    },
+
+    // 聚焦显示下拉
+    onProductNameFocus: function () {
+        if (this.data.productName) {
+            const filtered = autoComplete.filterList(this.data.productName, this.data.allProductNames);
+            this.setData({
+                filteredProductNames: filtered,
+                showProductNameDropdown: !!filtered.length
+            });
+        } else {
+            this.setData({
+                filteredProductNames: this.data.allProductNames,
+                showProductNameDropdown: !!this.data.allProductNames.length
+            });
+        }
+    },
+
+    // 失焦隐藏下拉（延迟，避免点击事件被吞）
+    onProductNameBlur: function () {
+        setTimeout(() => {
+            this.setData({ showProductNameDropdown: false });
+        }, 200);
+    },
     data: {
         productName: '',
         purchaseDate: '',
         location: '',
+        brand: '',
         originalPrice: '',
         currentPrice: '',
-        category: '食品',
         note: '',
-        // categories 字段已移除
-        showCategoryPicker: false,
         isEditing: false,
-        editId: null
+        editId: null,
+        allLocations: [], // 所有历史地点
+        filteredLocations: [], // 筛选后的地点
+        showLocationDropdown: false, // 是否显示下拉
+        // 货币选择相关
+        currencyIndex: 0, // 默认值会在onLoad时更新为用户首选货币
+        currencies: CURRENCIES
     },
 
     onLoad: function (options) {
-        // 只做初始化，不处理编辑回显，全部交给onShow
+        // 获取用户首选货币索引
+        const preferredCurrencyIndex = getPreferredCurrencyIndex();
+
+        // 初始化表单并应用首选货币
         this.clearForm();
+
+        // 设置货币索引为用户首选货币
+        this.setData({
+            currencyIndex: preferredCurrencyIndex
+        });
     },
 
     onShow: function () {
         // 仅编辑跳转时回显，其它场景始终新增
         const app = getApp();
         const editProduct = app.globalData && app.globalData.editProduct;
-        // console.log('[add.js onShow] editProduct:', editProduct);
+        // 统计所有历史商品名
+        const allProductNames = getAllProductNames();
+        const allLocations = getAllLocations();
+        this.setData({
+            allProductNames,
+            filteredProductNames: allProductNames,
+            showProductNameDropdown: false
+        });
+        // 统一获取品牌
+        const allBrands = getAllBrands();
+        this.setData({
+            allLocations,
+            filteredLocations: allLocations,
+            showLocationDropdown: false,
+            allBrands,
+            filteredBrands: allBrands,
+            showBrandDropdown: false
+        });
         if (editProduct && editProduct.id) {
             // 防止二次清空：加锁标记
             if (!this._hasEchoed || this.data.editId !== editProduct.id) {
@@ -34,9 +115,10 @@ Page({
                     productName: editProduct.name || '',
                     purchaseDate: editProduct.date || '',
                     location: editProduct.location || '',
+                    brand: editProduct.brand || '',
                     originalPrice: editProduct.originalPrice === undefined ? '' : editProduct.originalPrice,
                     currentPrice: editProduct.currentPrice === undefined ? '' : editProduct.currentPrice,
-                    category: editProduct.category || '食品',
+                    // category 字段已移除
                     note: editProduct.note || ''
                 });
                 this._hasEchoed = true;
@@ -46,6 +128,54 @@ Page({
             this._hasEchoed = false;
             this.clearForm();
         }
+    },
+    // 输入品牌，支持下拉筛选
+    onBrandInput: function (e) {
+        const input = e.detail.value;
+        const filtered = this.data.allBrands.filter(brand => brand.indexOf(input) !== -1);
+        this.setData({
+            brand: input,
+            filteredBrands: filtered,
+            showBrandDropdown: !!(filtered.length && input)
+        });
+    },
+
+    // 选中下拉品牌
+    onSelectBrand: function (e) {
+        const brand = e.currentTarget.dataset.brand;
+        this.setData({
+            brand: brand,
+            showBrandDropdown: false
+        });
+    },
+
+    // 聚焦显示下拉
+    onBrandFocus: function () {
+        if (this.data.brand) {
+            const filtered = autoComplete.filterList(this.data.brand, this.data.allBrands);
+            this.setData({
+                filteredBrands: filtered,
+                showBrandDropdown: !!filtered.length
+            });
+        } else {
+            this.setData({
+                filteredBrands: this.data.allBrands,
+                showBrandDropdown: !!this.data.allBrands.length
+            });
+        }
+    },
+
+    // 失焦隐藏下拉（延迟，避免点击事件被吞）
+    onBrandBlur: function () {
+        setTimeout(() => {
+            this.setData({ showBrandDropdown: false });
+        }, 200);
+    },
+    // 输入品牌
+    onBrandInput: function (e) {
+        this.setData({
+            brand: e.detail.value
+        });
     },
 
     // 加载商品数据用于编辑
@@ -66,7 +196,7 @@ Page({
                     location: product.location || '',
                     originalPrice: product.originalPrice === undefined ? '' : product.originalPrice,
                     currentPrice: product.currentPrice === undefined ? '' : product.currentPrice,
-                    category: product.category || '食品',
+                    // category 字段已移除
                     note: product.note || ''
                 });
             }
@@ -93,11 +223,47 @@ Page({
         });
     },
 
-    // 输入地点
+    // 输入地点，支持下拉筛选
     onLocationInput: function (e) {
+        const input = e.detail.value;
+        const filtered = this.data.allLocations.filter(loc => loc.indexOf(input) !== -1);
         this.setData({
-            location: e.detail.value
+            location: input,
+            filteredLocations: filtered,
+            showLocationDropdown: !!(filtered.length && input)
         });
+    },
+
+    // 选中下拉地点
+    onSelectLocation: function (e) {
+        const loc = e.currentTarget.dataset.location;
+        this.setData({
+            location: loc,
+            showLocationDropdown: false
+        });
+    },
+
+    // 聚焦显示下拉
+    onLocationFocus: function () {
+        if (this.data.location) {
+            const filtered = autoComplete.filterList(this.data.location, this.data.allLocations);
+            this.setData({
+                filteredLocations: filtered,
+                showLocationDropdown: !!filtered.length
+            });
+        } else {
+            this.setData({
+                filteredLocations: this.data.allLocations,
+                showLocationDropdown: !!this.data.allLocations.length
+            });
+        }
+    },
+
+    // 失焦隐藏下拉（延迟，避免点击事件被吞）
+    onLocationBlur: function () {
+        setTimeout(() => {
+            this.setData({ showLocationDropdown: false });
+        }, 200);
     },
 
     // 输入原价
@@ -121,6 +287,18 @@ Page({
         });
     },
 
+    // 货币选择变化
+    onCurrencyChange: function (e) {
+        const index = e.detail.value;
+        this.setData({
+            currencyIndex: index
+        });
+
+        // 保存用户选择的货币作为首选
+        const currency = getCurrencyByIndex(index);
+        savePreferredCurrency(currency.code);
+    },
+
     // 分类相关方法已移除
 
     // 保存商品
@@ -136,34 +314,37 @@ Page({
                     return p.id === this.data.editId;
                 }.bind(this));
                 if (index !== -1) {
-                    // 用 Object.assign 合并，保留所有原字段
                     var oldProduct = products[index];
-                    var updated = Object.assign({}, oldProduct, {
+                    var updated = createProduct(Object.assign({}, oldProduct, {
                         name: this.data.productName.trim(),
                         date: this.data.purchaseDate,
                         location: this.data.location.trim(),
+                        brand: this.data.brand.trim(),
                         originalPrice: this.data.originalPrice ? parseFloat(this.data.originalPrice) : null,
                         currentPrice: parseFloat(this.data.currentPrice),
-                        category: this.data.category,
+                        // category 字段已移除
                         note: this.data.note.trim(),
+                        currency: this.data.currencies[this.data.currencyIndex],
                         updateTime: Date.now()
-                    });
+                    }));
                     products[index] = updated;
                 }
             } else {
                 // 新增模式：添加新商品
-                var productData = {
+                var productData = createProduct({
                     id: this.generateId(),
                     name: this.data.productName.trim(),
                     date: this.data.purchaseDate,
                     location: this.data.location.trim(),
+                    brand: this.data.brand.trim(),
                     originalPrice: this.data.originalPrice ? parseFloat(this.data.originalPrice) : null,
                     currentPrice: parseFloat(this.data.currentPrice),
-                    category: this.data.category,
+                    // category 字段已移除
                     note: this.data.note.trim(),
+                    currency: getCurrencyByIndex(this.data.currencyIndex),
                     createTime: Date.now(),
                     updateTime: Date.now()
-                };
+                });
                 products.push(productData);
             }
             wx.setStorageSync('products', products);
@@ -240,16 +421,22 @@ Page({
     clearForm: function () {
         var today = new Date();
         var dateStr = today.toISOString().split('T')[0];
+
+        // 获取用户首选货币索引
+        const preferredCurrencyIndex = getPreferredCurrencyIndex();
+
         this.setData({
             productName: '',
             purchaseDate: dateStr,
             location: '',
+            brand: '',
             originalPrice: '',
             currentPrice: '',
-            category: '食品',
+            // category 字段已移除
             note: '',
             isEditing: false,
             editId: null,
+            currencyIndex: preferredCurrencyIndex, // 使用用户首选货币
             createTime: '',
             updateTime: ''
         });

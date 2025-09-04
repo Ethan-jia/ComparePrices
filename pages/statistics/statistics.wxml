@@ -35,25 +35,7 @@
   </view>
 
   <!-- 分类统计 -->
-  <view class="section-card" wx:if="{{categoryStats.length > 0}}">
-    <view class="section-title">分类统计</view>
-    <view class="category-stats">
-      <view 
-        wx:for="{{categoryStats}}" 
-        wx:key="category"
-        class="category-stat-item"
-      >
-        <view class="category-info">
-          <view class="category-name">{{item.category}}</view>
-          <view class="category-count">{{item.count}}件商品</view>
-        </view>
-        <view class="category-amount">
-          <view class="amount-value">¥{{item.totalSpent}}</view>
-          <view class="amount-avg">平均¥{{item.averagePrice}}</view>
-        </view>
-      </view>
-    </view>
-  </view>
+  <!-- 分类统计已移除 -->
 
   <!-- 月度统计 -->
   <view class="section-card" wx:if="{{monthlyStats.length > 0}}">

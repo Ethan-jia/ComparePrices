@@ -1,4 +1,5 @@
 // statistics.js
+const { createProduct } = require('../../models/product');
 Page({
   // 价格统计弹窗
   showDevModal: function () {
@@ -12,7 +13,6 @@ Page({
     totalProducts: 0,
     totalSpent: 0,
     averagePrice: 0,
-    categoryStats: [],
     monthlyStats: [],
     recentProducts: [],
     selectedPeriod: 'all',
@@ -34,11 +34,10 @@ Page({
   // 加载统计数据
   loadStatistics: function () {
     try {
-      var products = wx.getStorageSync('products') || [];
+      var products = (wx.getStorageSync('products') || []).map(createProduct);
       var filteredProducts = this.filterProductsByPeriod(products);
 
       this.calculateBasicStats(filteredProducts);
-      this.calculateCategoryStats(filteredProducts);
       this.calculateMonthlyStats(filteredProducts);
       this.loadRecentProducts(products);
     } catch (error) {
@@ -96,41 +95,7 @@ Page({
   },
 
   // 计算分类统计
-  calculateCategoryStats: function (products) {
-    try {
-      var categoryMap = {};
-
-      products.forEach(function (product) {
-        if (!categoryMap[product.category]) {
-          categoryMap[product.category] = {
-            count: 0,
-            totalSpent: 0,
-            averagePrice: 0
-          };
-        }
-        categoryMap[product.category].count++;
-        categoryMap[product.category].totalSpent += product.currentPrice;
-      });
-
-      var categoryStats = [];
-      for (var category in categoryMap) {
-        var stats = categoryMap[category];
-        stats.averagePrice = stats.count > 0 ? stats.totalSpent / stats.count : 0;
-        categoryStats.push({
-          category: category,
-          count: stats.count,
-          totalSpent: stats.totalSpent.toFixed(2),
-          averagePrice: stats.averagePrice.toFixed(2)
-        });
-      }
-
-      this.setData({
-        categoryStats: categoryStats
-      });
-    } catch (error) {
-      console.error('计算分类统计失败:', error);
-    }
-  },
+  // calculateCategoryStats 已移除
 
   // 计算月度统计
   calculateMonthlyStats: function (products) {
@@ -170,9 +135,10 @@ Page({
         monthlyStats.push(stats);
       }
 
-      // 计算柱状图宽度
+      // 计算柱状图宽度和金额格式化
       monthlyStats.forEach(function (stats) {
         stats.barWidth = maxSpent > 0 ? (stats.totalSpent / maxSpent * 100) : 0;
+        stats.totalSpent = stats.totalSpent.toFixed(2);
       });
 
       this.setData({

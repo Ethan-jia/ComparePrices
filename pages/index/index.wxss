@@ -1,3 +1,20 @@
+/* 隐藏测试数据按钮样式 */
+.test-btn {
+  position: fixed;
+  right: 18px;
+  bottom: 90px;
+  z-index: 999;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.test-btn:active {
+  opacity: 1;
+}
 /* index.wxss */
 .container {
   padding: 16px;
@@ -75,6 +92,37 @@
   border-radius: 12px;
   margin-bottom: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-group {
+  margin-bottom: 16px;
+}
+
+.filter-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 8px;
+}
+
+.sort-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sort-option {
+  padding: 8px 16px;
+  background: #F2F2F7;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #8A8A8A;
+  border: 1px solid transparent;
+}
+
+.sort-option.active {
+  background: #007AFF;
+  color: #FFFFFF;
 }
 
 .category-list {
@@ -245,6 +293,7 @@
   font-weight: 500;
   transition: right 0.3s ease;
   z-index: 10;
+  border-radius: 0 12px 12px 0;
 }
 
 .product-card-container .product-card.swiping + .delete-btn {

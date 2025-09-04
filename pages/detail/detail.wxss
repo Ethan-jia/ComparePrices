@@ -1,3 +1,64 @@
+/* 顶部筛选栏样式 */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px 0 16px;
+  background-color: #F2F2F7; /* 与container背景一致 */
+  margin-bottom: 8px;
+}
+
+/* 使按钮和picker均匀分布 */
+.filter-bar > button,
+.filter-bar > picker {
+  flex: 1;
+  margin: 0 6px;
+}
+
+/* 第一个元素左边无间距 */
+.filter-bar > button:first-child,
+.filter-bar > picker:first-child {
+  margin-left: 0;
+}
+
+/* 最后一个元素右边无间距 */
+.filter-bar > button:last-child,
+.filter-bar > picker:last-child {
+  margin-right: 0;
+}
+
+.filter-btn {
+  border: none;
+  border-radius: 12px;
+  background: #FFFFFF;
+  color: #007AFF;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  padding: 6px 0;
+  width: 100%; /* 确保按钮填满父容器 */
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 与卡片一样的阴影 */
+}
+
+.filter-btn.active {
+  background: #007AFF;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,122,255,0.2);
+}
+.filter-picker {
+  margin-left: 8px;
+  padding: 6px 16px;
+  background: #F2F2F7;
+  border-radius: 16px;
+  color: #007AFF;
+  font-size: 15px;
+  min-width: 80px;
+  display: inline-block;
+}
 /* detail.wxss */
 .container {
   padding: 16px;
@@ -69,13 +130,18 @@
   font-weight: 500;
 }
 
+.currency-symbol {
+  font-weight: bold;
+  font-size: 18px;
+}
+
 /* 价格信息卡片 */
 
 /* 价格信息样式（合并到商品卡片右上角） */
 .current-price {
   font-size: 24px;
   font-weight: 600;
-  color: #007AFF;
+  color: #34C759;
   text-align: right;
 }
 .original-price {
@@ -165,6 +231,10 @@
   margin-bottom: 4px;
   white-space: nowrap;
 }
+.chart-point.min .point-value {
+  border: 2px solid #34C759;
+  color: #34C759;
+}
 
 .point-date {
   font-size: 10px;
@@ -175,6 +245,11 @@
 .chart-point.current .point-value {
   background: #007AFF;
   color: #FFFFFF;
+}
+.chart-point.min.current .point-value {
+  background: #34C759;
+  color: #FFFFFF;
+  border: 2px solid #34C759;
 }
 
 .chart-connections {
@@ -205,12 +280,20 @@
 
 .history-header {
   margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .history-title {
   font-size: 18px;
   font-weight: 600;
   color: #000000;
+}
+
+.history-count {
+  font-size: 14px;
+  color: #8A8A8A;
 }
 
 .history-list {
@@ -257,6 +340,11 @@
   font-weight: 600;
   color: #000000;
   margin-right: 8px;
+}
+.history-price.savings-price {
+  color: #34C759;
+  font-weight: bold;
+  font-size: 18px;
 }
 
 .current-indicator {
@@ -306,6 +394,37 @@
 
 .btn-delete:active {
   background: #DC3545;
+}
+
+/* 单个数据提示卡片 */
+.single-data-tip {
+  margin: 20px 16px;
+  padding: 16px;
+  background: #FFFFFF;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tip-icon {
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 122, 255, 0.1);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  color: #007AFF;
+  font-size: 20px;
+}
+
+.tip-text {
+  flex: 1;
+  font-size: 14px;
+  color: #5A5A5A;
+  line-height: 1.4;
 }
 
 /* 加载状态 */
