@@ -1,5 +1,5 @@
 <!--index.wxml-->
-<navigation-bar title="比价助手" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+<navigation-bar title="多比比" back="{{false}}" color="black" background="#FFF"></navigation-bar>
 
 <view class="container">
   <!-- 搜索栏 -->
@@ -22,15 +22,29 @@
 
   <!-- 筛选面板 -->
   <view class="filter-panel" wx:if="{{showFilter}}">
-    <view class="category-list">
-      <view 
-        wx:for="{{categories}}" 
-        wx:key="*this"
-        class="category-item {{selectedCategory === item ? 'active' : ''}}"
-        data-category="{{item}}"
-        bindtap="selectCategory"
-      >
-        {{item}}
+    <!-- 价格排序 -->
+    <view class="filter-group">
+      <view class="filter-title">价格排序</view>
+      <view class="sort-options">
+        <view class="sort-option {{sortBy === 'priceAsc' ? 'active' : ''}}" data-sort="priceAsc" bindtap="setSortOption">
+          价格从低到高
+        </view>
+        <view class="sort-option {{sortBy === 'priceDesc' ? 'active' : ''}}" data-sort="priceDesc" bindtap="setSortOption">
+          价格从高到低
+        </view>
+      </view>
+    </view>
+    
+    <!-- 日期排序 -->
+    <view class="filter-group">
+      <view class="filter-title">日期排序</view>
+      <view class="sort-options">
+        <view class="sort-option {{sortBy === 'dateDesc' ? 'active' : ''}}" data-sort="dateDesc" bindtap="setSortOption">
+          最新日期优先
+        </view>
+        <view class="sort-option {{sortBy === 'dateAsc' ? 'active' : ''}}" data-sort="dateAsc" bindtap="setSortOption">
+          最早日期优先
+        </view>
       </view>
     </view>
   </view>
@@ -49,7 +63,7 @@
       class="product-card-container"
     >
       <view 
-        class="product-card {{item.swiping ? 'swiping' : ''}}"
+        class="product-card {{item && item.swiping ? 'swiping' : ''}}"
         data-index="{{index}}"
         bindtouchstart="onTouchStart"
         bindtouchmove="onTouchMove"
@@ -62,15 +76,11 @@
             <text class="product-date">{{item.date}}</text>
             <text class="product-location">{{item.location}}</text>
           </view>
-          <!-- <view class="product-category">{{item.category}}</view> -->
+          <!-- 分类字段已移除 -->
         </view>
         
         <view class="product-price">
           <view class="current-price">¥{{item.currentPrice}}</view>
-          <view wx:if="{{item.originalPrice}}" class="original-price">¥{{item.originalPrice}}</view>
-          <view wx:if="{{item.showDiscount}}" class="discount">
-            省¥{{item.savedAmount}}
-          </view>
         </view>
       </view>
       
@@ -84,9 +94,15 @@
     </view>
   </view>
 
+
   <!-- 悬浮添加按钮 -->
   <view class="fab" bindtap="goToAdd">
     <text class="fab-icon">+</text>
+  </view>
+
+  <!-- 测试数据按钮，直接显示在+号下方，便于开发测试，上线可注释 -->
+  <view class="test-btn" catchtap="onGenerateTestData">
+    <text>生成100条测试数据</text>
   </view>
 
 

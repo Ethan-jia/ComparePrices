@@ -1,6 +1,22 @@
 <!--detail.wxml-->
 <navigation-bar title="商品详情" back="{{true}}" color="black" background="#FFF"></navigation-bar>
 
+
+<!-- 顶部筛选切换栏 -->
+<view class="filter-bar" wx:if="{{product}}">
+  <button class="filter-btn filter-btn-all {{filterType==='all' ? 'active' : ''}}" bindtap="onFilterTypeChange" data-type="all">全部</button>
+  <picker mode="selector" range="{{brandList}}" value="{{brandIndex}}" bindchange="onBrandPickerChange">
+    <view class="filter-btn filter-btn-brand {{filterType==='brand' ? 'active' : ''}}">
+      {{filterType==='brand' && selectedBrand ? selectedBrand : '品牌'}}
+    </view>
+  </picker>
+  <picker mode="selector" range="{{locationList}}" value="{{locationIndex}}" bindchange="onLocationPickerChange">
+    <view class="filter-btn filter-btn-location {{filterType==='location' ? 'active' : ''}}">
+      {{filterType==='location' && selectedLocation ? selectedLocation : '店铺'}}
+    </view>
+  </picker>
+</view>
+
 <view class="container" wx:if="{{product}}">
 
   <!-- 商品信息卡片（含价格） -->
@@ -11,8 +27,12 @@
         <!-- <view class="product-category">{{product.category}}</view> -->
       </view>
       <view style="display: flex; flex-direction: column; align-items: flex-end;">
-        <view class="current-price" style="font-size: 24px; color: #007AFF; font-weight: bold;">¥{{product.currentPrice}}</view>
-        <view wx:if="{{product.originalPrice}}" class="original-price" style="font-size: 14px; color: #8A8A8A; text-decoration: line-through;">¥{{product.originalPrice}}</view>
+        <view class="current-price" style="font-size: 24px; color: #007AFF; font-weight: bold;">
+          ¥{{product.currentPrice}}
+        </view>
+        <view wx:if="{{product.originalPrice}}" class="original-price" style="font-size: 14px; color: #8A8A8A; text-decoration: line-through;">
+          ¥{{product.originalPrice}}
+        </view>
       </view>
     </view>
     <view class="product-info">
@@ -26,16 +46,14 @@
           <text class="info-value">{{product.location}}</text>
         </view>
       </view>
+      <!-- 货币和符号信息已删除 -->
       <view wx:if="{{product.note}}" class="info-row">
         <view class="info-item full-width">
           <text class="info-label">备注</text>
           <text class="info-value">{{product.note}}</text>
         </view>
       </view>
-      <view wx:if="{{showSavings}}" class="savings-info" style="margin-top: 8px; display: flex; align-items: center;">
-        <text class="savings-text">节省了 ¥{{savingsAmount}}</text>
-        <view wx:if="{{showDiscount}}" class="discount-badge" style="margin-left: 8px;">省{{discountPercent}}%</view>
-      </view>
+  <!-- 节省信息已移除 -->
     </view>
   </view>
 
@@ -56,11 +74,22 @@
       </block>
     </view>
   </view>
+  
+  <!-- 单个数据提示卡片 -->
+  <view class="single-data-tip" wx:elif="{{priceHistory.length == 1}}">
+    <view class="tip-icon">
+      <text>!</text>
+    </view>
+    <view class="tip-text">
+      <text>添加更多价格记录，即可查看价格趋势和历史记录</text>
+    </view>
+  </view>
 
   <!-- 价格历史列表 -->
   <view class="history-card" wx:if="{{priceHistory.length > 1}}">
     <view class="history-header">
       <text class="history-title">价格记录</text>
+      <text class="history-count">共 {{priceHistoryCount}} 条</text>
     </view>
     
     <view class="history-list">
@@ -75,7 +104,9 @@
           <view class="history-date">{{item.date}}</view>
           <view class="history-location">{{item.location}}</view>
         </view>
-        <view class="history-price">¥{{item.currentPrice}}</view>
+  <view class="history-price {{item.isMin ? 'savings-price' : ''}}">
+    <text>{{item.currency && item.currency.symbol || '¥'}}</text>{{item.currentPrice}}
+  </view>
         <view wx:if="{{item.isCurrent}}" class="current-indicator">当前</view>
       </view>
     </view>

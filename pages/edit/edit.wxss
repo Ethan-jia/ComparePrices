@@ -1,5 +1,55 @@
+/* 商品名称下拉建议专用样式（与add.wxss同步） */
+.productname-dropdown-list {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  width: auto;
+  /* 让下拉紧贴输入框底部 */
+  top: 90px;
+  background: #fff;
+  border: 1px solid #e5e5ea;
+  border-radius: 8px;
+  z-index: 20;
+  max-height: 180px;
+  overflow-y: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.productname-dropdown-item {
+  padding: 10px 16px;
+  font-size: 15px;
+  color: #333;
+  cursor: pointer;
+}
+.productname-dropdown-item:hover, .productname-dropdown-item:active {
+  background: #f2f2f7;
+}
+/* 品牌下拉菜单样式（与add.wxss一致） */
+.dropdown-list {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 70px;
+  width: auto;
+  background: #fff;
+  border: 1px solid #e5e5ea;
+  border-radius: 8px;
+  z-index: 10;
+  max-height: 180px;
+  overflow-y: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.dropdown-item {
+  padding: 10px 16px;
+  font-size: 15px;
+  color: #333;
+  cursor: pointer;
+}
+.dropdown-item:hover, .dropdown-item:active {
+  background: #f2f2f7;
+}
 
 /* edit.wxss（与add.wxss完全同步） */
+
 .container {
   padding: 16px;
   background-color: #F2F2F7;

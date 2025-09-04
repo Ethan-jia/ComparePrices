@@ -4,14 +4,21 @@
 <view class="container">
   <form class="form">
     <!-- 商品名称 -->
-    <view class="form-group">
+    <view class="form-group" style="position:relative;">
       <view class="form-label">商品名称 <text class="required">*</text></view>
       <input 
         class="form-input" 
         placeholder="请输入商品名称" 
         value="{{productName}}"
-        bindinput="onNameInput"
+        bindinput="onProductNameInput"
+        bindfocus="onProductNameFocus"
+        bindblur="onProductNameBlur"
       />
+      <view wx:if="{{showProductNameDropdown}}" class="productname-dropdown-list">
+        <view wx:for="{{filteredProductNames}}" wx:key="item" class="productname-dropdown-item" data-name="{{item}}" bindtap="onSelectProductName">
+          {{item}}
+        </view>
+      </view>
     </view>
 
     <!-- 购买日期 -->
@@ -30,23 +37,64 @@
     </view>
 
     <!-- 购买地点 -->
-    <view class="form-group">
+    <view class="form-group" style="position:relative;">
       <view class="form-label">购买地点 <text class="required">*</text></view>
       <input 
         class="form-input" 
         placeholder="请输入购买地点" 
         value="{{location}}"
         bindinput="onLocationInput"
+        bindfocus="onLocationFocus"
+        bindblur="onLocationBlur"
       />
+      <view wx:if="{{showLocationDropdown}}" class="dropdown-list">
+        <view wx:for="{{filteredLocations}}" wx:key="item" class="dropdown-item" data-location="{{item}}" bindtap="onSelectLocation">
+          {{item}}
+        </view>
+      </view>
     </view>
 
+    <!-- 品牌 -->
+    <view class="form-group" style="position:relative;">
+      <view class="form-label">品牌 <text class="optional">(可选)</text></view>
+      <input 
+        class="form-input" 
+        placeholder="请输入品牌，如可口可乐、伊利等" 
+        value="{{brand}}"
+        bindinput="onBrandInput"
+        bindfocus="onBrandFocus"
+        bindblur="onBrandBlur"
+      />
+      <view wx:if="{{showBrandDropdown}}" class="dropdown-list">
+        <view wx:for="{{filteredBrands}}" wx:key="item" class="dropdown-item" data-brand="{{item}}" bindtap="onSelectBrand">
+          {{item}}
+        </view>
+      </view>
+    </view>
+
+
+    <!-- 货币选择 -->
+    <view class="form-group">
+      <view class="form-label">货币 <text class="required">*</text></view>
+      <picker 
+        bindchange="onCurrencyChange" 
+        value="{{currencyIndex}}" 
+        range="{{currencies}}" 
+        range-key="label"
+      >
+        <view class="picker-input">
+          <text class="picker-text">{{currencies[currencyIndex].label}} ({{currencies[currencyIndex].symbol}})</text>
+          <text class="picker-arrow">></text>
+        </view>
+      </picker>
+    </view>
 
     <!-- 价格信息（并排对齐） -->
     <view class="form-group" style="display: flex; gap: 12px;">
       <view style="flex:1;">
         <view class="form-label">现价 <text class="required">*</text></view>
         <view class="price-input-wrapper">
-          <text class="price-symbol">¥</text>
+          <text class="price-symbol">{{currencies[currencyIndex].symbol}}</text>
           <input 
             class="form-input price-input" 
             type="digit"
@@ -59,7 +107,7 @@
       <view style="flex:1;">
         <view class="form-label">原价 <text class="optional">(可选)</text></view>
         <view class="price-input-wrapper">
-          <text class="price-symbol">¥</text>
+          <text class="price-symbol">{{currencies[currencyIndex].symbol}}</text>
           <input 
             class="form-input price-input" 
             type="digit"
@@ -85,15 +133,16 @@
       ></textarea>
       <view class="textarea-counter">{{note.length}}/200</view>
     </view>
-
-    <!-- 操作按钮 -->
-    <view class="form-actions">
-      <button class="btn btn-secondary" bindtap="clearForm">清空</button>
-      <button class="btn btn-primary" bindtap="saveProduct">
-        {{isEditing ? '更新' : '保存'}}
-      </button>
-    </view>
+    
+    <!-- 底部占位，确保内容不被固定按钮遮挡 -->
+    <view class="form-footer-placeholder"></view>
   </form>
+</view>
 
-
+<!-- 固定在底部的操作按钮 -->
+<view class="fixed-form-actions">
+  <button class="btn btn-secondary" bindtap="clearForm">清空</button>
+  <button class="btn btn-primary" bindtap="saveProduct">
+    {{isEditing ? '更新' : '保存'}}
+  </button>
 </view>
