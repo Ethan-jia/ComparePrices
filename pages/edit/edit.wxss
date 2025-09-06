@@ -1,52 +1,4 @@
-/* 商品名称下拉建议专用样式（与add.wxss同步） */
-.productname-dropdown-list {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  width: auto;
-  /* 让下拉紧贴输入框底部 */
-  top: 90px;
-  background: #fff;
-  border: 1px solid #e5e5ea;
-  border-radius: 8px;
-  z-index: 20;
-  max-height: 180px;
-  overflow-y: auto;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-.productname-dropdown-item {
-  padding: 10px 16px;
-  font-size: 15px;
-  color: #333;
-  cursor: pointer;
-}
-.productname-dropdown-item:hover, .productname-dropdown-item:active {
-  background: #f2f2f7;
-}
-/* 品牌下拉菜单样式（与add.wxss一致） */
-.dropdown-list {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  top: 70px;
-  width: auto;
-  background: #fff;
-  border: 1px solid #e5e5ea;
-  border-radius: 8px;
-  z-index: 10;
-  max-height: 180px;
-  overflow-y: auto;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-.dropdown-item {
-  padding: 10px 16px;
-  font-size: 15px;
-  color: #333;
-  cursor: pointer;
-}
-.dropdown-item:hover, .dropdown-item:active {
-  background: #f2f2f7;
-}
+/* 已移除下拉相关样式，因为现在使用dropdown-select组件 */
 
 /* edit.wxss（与add.wxss完全同步） */
 
@@ -136,21 +88,7 @@
   color: #8A8A8A;
 }
 
-/* 价格输入区域 */
-.price-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.price-symbol {
-  position: absolute;
-  left: 12px;
-  font-size: 16px;
-  color: #000000;
-  z-index: 1;
-}
-
+/* 价格输入区域已使用price-input组件替代 */
 .price-input {
   padding-left: 28px;
 }
@@ -181,15 +119,24 @@
   margin-top: 4px;
 }
 
-/* 操作按钮 */
-.form-actions {
+/* 固定在底部的操作按钮 */
+.fixed-form-actions {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   gap: 12px;
-  margin-top: 32px;
-  background: #FFFFFF;
   padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #FFFFFF;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  border-top: 1px solid #E5E5EA;
+}
+
+/* 底部占位，确保内容不被固定按钮遮挡 */
+.form-footer-placeholder {
+  height: 76px; /* 按钮高度 + 上下padding */
 }
 
 .btn {
@@ -223,36 +170,7 @@
   background: #E5E5EA;
 }
 
-/* 分类选择器 */
-.category-picker {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1000;
-}
-
-.picker-mask {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-}
-
-.picker-content {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #FFFFFF;
-  border-radius: 12px 12px 0 0;
-  max-height: 60vh;
-  display: flex;
-  flex-direction: column;
-}
+/* 分类选择器相关样式已移除，因为已不再需要 */
 
 .picker-header {
   display: flex;

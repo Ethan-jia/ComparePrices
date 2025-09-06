@@ -1,0 +1,38 @@
+<!-- components/dropdown-select/dropdown-select.wxml -->
+<view class="dropdown-container {{customClass}}">
+  <!-- 标签 -->
+  <view class="dropdown-label" wx:if="{{label}}">
+    {{label}} <text class="{{required ? 'required' : 'optional'}}">{{required ? '*' : '(可选)'}}</text>
+  </view>
+  
+  <!-- 输入框 -->
+  <view class="input-wrapper">
+    <input 
+      class="dropdown-input" 
+      placeholder="{{placeholder}}" 
+      value="{{value}}"
+      bindinput="onInput"
+      bindfocus="onFocus"
+      bindblur="onBlur"
+    />
+  </view>
+  
+  <!-- 下拉列表 -->
+  <view 
+    class="dropdown-list {{showDropdown ? 'show' : ''}}" 
+    wx:if="{{showDropdown && filteredOptions.length > 0}}"
+    catchtap="noop"
+  >
+    <scroll-view scroll-y class="dropdown-scroll" style="max-height: 300rpx;">
+      <view 
+        wx:for="{{filteredOptions}}" 
+        wx:key="*this" 
+        class="dropdown-item {{highlightIndex === index ? 'highlight' : ''}}" 
+        data-option="{{item}}" 
+        catchtap="onSelectOption"
+      >
+        {{item}}
+      </view>
+    </scroll-view>
+  </view>
+</view>

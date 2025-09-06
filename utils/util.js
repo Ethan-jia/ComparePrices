@@ -23,7 +23,7 @@ const safeGetStorage = (key, defaultValue = null) => {
         const value = wx.getStorageSync(key)
         return value !== '' ? value : defaultValue
     } catch (error) {
-        console.error(`获取存储数据失败: ${key}`, error)
+        // 数据获取失败，返回默认值
         return defaultValue
     }
 }
@@ -34,7 +34,7 @@ const safeSetStorage = (key, value) => {
         wx.setStorageSync(key, value)
         return true
     } catch (error) {
-        console.error(`设置存储数据失败: ${key}`, error)
+        // 数据设置失败
         return false
     }
 }

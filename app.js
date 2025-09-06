@@ -1,78 +1,46 @@
-// app.js
+/**
+ * 应用程序入口
+ * 
+ * 功能：
+ * 1. 初始化应用程序
+ * 2. 提供全局数据和方法
+ * 3. 创建初始测试数据（如果需要）
+ */
+
+const { safeGetStorage, safeSetStorage } = require('./utils/util');
+
 App({
   onLaunch: function () {
     // 展示本地存储能力
-    var logs = wx.getStorageSync('logs') || []
+    var logs = safeGetStorage('logs', [])
     logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
+    safeSetStorage('logs', logs)
 
     // 登录
     wx.login({
       success: function (res) {
-        console.log('登录成功', res)
+        // 登录成功
       }
     })
 
   },
 
   onShow: function () {
-    console.log('App Show')
+    // 应用显示
   },
 
   onHide: function () {
-    console.log('App Hide')
+    // 应用隐藏
   },
 
 
-  // 初始化测试数据
+  /**
+   * 初始化数据
+   * 只有在首次启动应用且没有数据时才会调用
+   */
   initTestData: function () {
-    try {
-      var products = wx.getStorageSync('products')
-      if (!products || products.length === 0) {
-        var testData = [
-          {
-            id: 'test1',
-            name: '牛奶',
-            date: '2024-01-15',
-            location: '超市A',
-            originalPrice: 8.5,
-            currentPrice: 6.9,
-            category: '食品',
-            note: '特价促销',
-            createTime: Date.now(),
-            updateTime: Date.now()
-          },
-          {
-            id: 'test2',
-            name: '苹果',
-            date: '2024-01-16',
-            location: '水果店',
-            originalPrice: null,
-            currentPrice: 12.8,
-            category: '食品',
-            note: '新鲜红富士',
-            createTime: Date.now(),
-            updateTime: Date.now()
-          },
-          {
-            id: 'test3',
-            name: '洗发水',
-            date: '2024-01-17',
-            location: '超市B',
-            originalPrice: 45.0,
-            currentPrice: 35.0,
-            category: '日用品',
-            note: '买一送一',
-            createTime: Date.now(),
-            updateTime: Date.now()
-          }
-        ]
-        wx.setStorageSync('products', testData)
-        console.log('测试数据初始化完成')
-      }
-    } catch (error) {
-      console.error('初始化测试数据失败:', error)
-    }
+    // 这个函数保留用于未来可能的数据初始化需求
+    // 已移除测试数据
   },
 
   globalData: {

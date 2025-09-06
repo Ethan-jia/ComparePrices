@@ -1,52 +1,4 @@
-/* 商品名称下拉建议专用样式 */
-.productname-dropdown-list {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  width: auto;
-  /* 让下拉紧贴输入框底部 */
-  top: 90px;
-  background: #fff;
-  border: 1px solid #e5e5ea;
-  border-radius: 8px;
-  z-index: 20;
-  max-height: 180px;
-  overflow-y: auto;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-.productname-dropdown-item {
-  padding: 10px 16px;
-  font-size: 15px;
-  color: #333;
-  cursor: pointer;
-}
-.productname-dropdown-item:hover, .productname-dropdown-item:active {
-  background: #f2f2f7;
-}
-/* 地点下拉菜单样式 */
-.dropdown-list {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  top: 70px;
-  width: auto;
-  background: #fff;
-  border: 1px solid #e5e5ea;
-  border-radius: 8px;
-  z-index: 10;
-  max-height: 180px;
-  overflow-y: auto;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-.dropdown-item {
-  padding: 10px 16px;
-  font-size: 15px;
-  color: #333;
-  cursor: pointer;
-}
-.dropdown-item:hover, .dropdown-item:active {
-  background: #f2f2f7;
-}
+/* 已移除下拉相关样式，因为现在使用dropdown-select组件 */
 /* add.wxss */
 .container {
   padding: 16px;
@@ -134,25 +86,9 @@
   color: #8A8A8A;
 }
 
-/* 价格输入区域 */
-
-
-.price-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.price-symbol {
-  position: absolute;
-  left: 12px;
-  font-size: 16px;
-  color: #000000;
-  z-index: 1;
-}
-
+/* 价格输入区域已使用price-input组件替代 */
 .price-input {
-  padding-left: 28px;
+  padding-left: 40px; /* 增加左侧填充，适应多位货币符号 */
 }
 
 /* 文本域 */
@@ -253,76 +189,4 @@
   background: #7A7A7F; /* 深灰色 */
 }
 
-/* 分类选择器 */
-.category-picker {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1000;
-}
-
-.picker-mask {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-}
-
-.picker-content {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #FFFFFF;
-  border-radius: 12px 12px 0 0;
-  max-height: 60vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.picker-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid #E5E5EA;
-}
-
-.picker-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #000000;
-}
-
-.picker-close {
-  font-size: 20px;
-  color: #8A8A8A;
-  padding: 4px;
-}
-
-.picker-body {
-  flex: 1;
-  padding: 16px 20px;
-  overflow-y: auto;
-}
-
-.picker-item {
-  padding: 16px 0;
-  font-size: 16px;
-  color: #000000;
-  border-bottom: 1px solid #F2F2F7;
-  text-align: center;
-}
-
-.picker-item:last-child {
-  border-bottom: none;
-}
-
-.picker-item.active {
-  color: #007AFF;
-  font-weight: 500;
-}
+/* 分类选择器相关样式已移除，因为已不再需要 */

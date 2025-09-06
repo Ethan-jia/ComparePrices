@@ -1,4 +1,9 @@
-// index.js
+/**
+ * @deprecated 此文件已废弃，请使用 /pages/detail/detail.js 替代
+ * 这是一个旧版本的详情页面，已不再使用，保留仅作参考
+ */
+
+// 废弃的 index.js
 Page({
     data: {
         searchKeyword: '',

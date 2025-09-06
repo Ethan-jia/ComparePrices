@@ -1,4 +1,8 @@
-<div align="center">
+<div align="## 项目简介 | Project Overview
+
+"多比比"是一款专注于价格比较的微信小程序，帮助用户追踪和对比日常商品价格。通过记录商品在不同店铺、不同时间的价格，用户可以直观地看到价格趋势，做出更明智的购买决策。支持多维度筛选、价格趋势图表、数据统计分析等功能，是您省钱购物的得力助手。所有数据完全保存在本地，无需注册和登录，充分保障用户隐私安全。
+
+DUOBIBI is a WeChat Mini Program focusing on price comparison. By tracking product prices across different stores and times, users can visualize price trends and make smarter purchasing decisions. With multi-dimensional filtering, price trend charts, and statistical analysis, it's your trusted shopping assistant. All data is stored locally, with no registration required, ensuring complete privacy protection.r">
 	<img src="./小程序二维码.jpg" alt="ComparePrices小程序二维码" width="180" />
 	<br />
 	<b>扫码体验 多比比 小程序</b>
@@ -20,12 +24,13 @@ ComparePrices is a WeChat Mini Program for recording and comparing daily product
 
 ## 主要功能 | Main Features
 
-- 商品录入、编辑、删除 / Add, edit, delete products
-- 商品详情与历史价格趋势折线图 / Product detail & price trend chart
-- 价格搜索与筛选 / Search & filter by product name
-- 数据统计（商品总数、消费总额、平均价格、分类统计、月度统计等）/ Data statistics (total products, total spent, average price, category/monthly stats)
-- 最近添加商品快捷入口 / Quick access to recently added products
-- 本地存储，无需后台 / Local storage only, no backend required
+- **商品管理**：快速录入、编辑和删除商品，支持品牌、店铺等多个属性 / Product management with support for brands, stores and more
+- **价格历史记录**：记录同一商品在不同时间、不同地点的价格，通过滑动可方便地管理每条记录 / Price history records with swipe-to-manage functionality
+- **价格趋势分析**：自动生成历史价格趋势折线图，直观呈现价格变化 / Price trend chart for visualizing price changes over time
+- **多维度筛选**：按名称搜索，按品牌、店铺筛选，智能处理无数据场景 / Smart filtering by name, brand, store with empty-state handling
+- **数据统计**：提供商品总数、消费总额、平均价格、分类统计、月度统计等多维度分析 / Comprehensive statistics (total products, spending, average prices, etc.)
+- **货币支持**：支持多种货币，方便记录国内外商品价格 / Multi-currency support for recording prices worldwide
+- **本地存储**：所有数据保存在本地，无需注册和登录，保护用户隐私 / Local storage only, no registration required, privacy-friendly
 
 
 
@@ -64,6 +69,13 @@ app.js/json/wxss  # 全局配置 / Global config
 
 
 ## 更新日志 | Changelog
+
+### 版本 1.0.3 | Version 1.0.3
+
+- **优化的筛选体验**：改进了品牌和店铺筛选功能，当无数据时自动隐藏相应筛选选项。
+- **更稳健的删除功能**：修复了价格历史记录的删除功能，现在可以正确删除滑动选中的记录。
+- **更好的错误处理**：增强了应用的稳定性，添加更多用户友好的错误提示。
+- **代码优化**：重构了部分核心功能，提高了应用性能和响应速度。
 
 ### 版本 1.0.2 | Version 1.0.2
 

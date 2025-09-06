@@ -7,7 +7,7 @@
     <view class="search-box">
       <input 
         class="search-input" 
-        placeholder="搜索商品，如：牛奶" 
+        placeholder="搜索商品" 
         value="{{searchKeyword}}"
         bindinput="onSearchInput"
       />
@@ -76,11 +76,10 @@
             <text class="product-date">{{item.date}}</text>
             <text class="product-location">{{item.location}}</text>
           </view>
-          <!-- 分类字段已移除 -->
         </view>
         
         <view class="product-price">
-          <view class="current-price">¥{{item.currentPrice}}</view>
+          <view class="current-price">{{item.currency && item.currency.symbol || '¥'}}{{item.currentPrice}}</view>
         </view>
       </view>
       

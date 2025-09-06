@@ -1,0 +1,23 @@
+<!-- components/price-input/price-input.wxml -->
+<view class="price-input-container">
+  <!-- 标签 -->
+  <view class="price-label" wx:if="{{label}}">
+    {{label}}<text class="{{required ? 'required' : 'optional'}}">{{required ? ' *' : ' (可选)'}}</text>
+  </view>
+  
+  <!-- 输入框带货币符号 -->
+  <view class="input-wrapper">
+    <text class="currency-symbol" style="min-width: {{symbolWidth}}px; width: {{symbolWidth}}px;">{{currencySymbol}}</text>
+    <input
+      class="price-input"
+      type="digit"
+      placeholder="{{placeholder}}"
+      value="{{value}}"
+      disabled="{{disabled}}"
+      bindinput="onInput"
+      bindblur="onBlur"
+      bindfocus="onFocus"
+      style="padding-left: {{symbolWidth + 8}}px;"
+    />
+  </view>
+</view>

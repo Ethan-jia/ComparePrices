@@ -5,57 +5,25 @@
 <!-- 顶部筛选切换栏 -->
 <view class="filter-bar" wx:if="{{product}}">
   <button class="filter-btn filter-btn-all {{filterType==='all' ? 'active' : ''}}" bindtap="onFilterTypeChange" data-type="all">全部</button>
-  <picker mode="selector" range="{{brandList}}" value="{{brandIndex}}" bindchange="onBrandPickerChange">
-    <view class="filter-btn filter-btn-brand {{filterType==='brand' ? 'active' : ''}}">
-      {{filterType==='brand' && selectedBrand ? selectedBrand : '品牌'}}
+  
+  <!-- 品牌筛选，仅在有品牌数据时显示 -->
+  <picker wx:if="{{brandList.length > 0}}" mode="selector" range="{{brandList}}" value="{{brandIndex}}" bindchange="onBrandPickerChange">
+    <view class="filter-btn filter-btn-brand {{filterType==='brand' ? 'active' : ''}}" bindtap="onFilterTypeChange" data-type="brand">
+      <text wx:if="{{filterType==='brand' && selectedBrand}}">{{selectedBrand}}</text>
+      <text wx:else>品牌</text>
     </view>
   </picker>
-  <picker mode="selector" range="{{locationList}}" value="{{locationIndex}}" bindchange="onLocationPickerChange">
-    <view class="filter-btn filter-btn-location {{filterType==='location' ? 'active' : ''}}">
-      {{filterType==='location' && selectedLocation ? selectedLocation : '店铺'}}
+  
+  <!-- 店铺筛选，仅在有店铺数据时显示 -->
+  <picker wx:if="{{locationList.length > 0}}" mode="selector" range="{{locationList}}" value="{{locationIndex}}" bindchange="onLocationPickerChange">
+    <view class="filter-btn filter-btn-location {{filterType==='location' ? 'active' : ''}}" bindtap="onFilterTypeChange" data-type="location">
+      <text wx:if="{{filterType==='location' && selectedLocation}}">{{selectedLocation}}</text>
+      <text wx:else>店铺</text>
     </view>
   </picker>
 </view>
 
 <view class="container" wx:if="{{product}}">
-
-  <!-- 商品信息卡片（含价格） -->
-  <view class="product-card">
-    <view class="product-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
-      <view>
-        <view class="product-title">{{product.name}}</view>
-        <!-- <view class="product-category">{{product.category}}</view> -->
-      </view>
-      <view style="display: flex; flex-direction: column; align-items: flex-end;">
-        <view class="current-price" style="font-size: 24px; color: #007AFF; font-weight: bold;">
-          ¥{{product.currentPrice}}
-        </view>
-        <view wx:if="{{product.originalPrice}}" class="original-price" style="font-size: 14px; color: #8A8A8A; text-decoration: line-through;">
-          ¥{{product.originalPrice}}
-        </view>
-      </view>
-    </view>
-    <view class="product-info">
-      <view class="info-row">
-        <view class="info-item">
-          <text class="info-label">购买日期</text>
-          <text class="info-value">{{product.date}}</text>
-        </view>
-        <view class="info-item">
-          <text class="info-label">购买地点</text>
-          <text class="info-value">{{product.location}}</text>
-        </view>
-      </view>
-      <!-- 货币和符号信息已删除 -->
-      <view wx:if="{{product.note}}" class="info-row">
-        <view class="info-item full-width">
-          <text class="info-label">备注</text>
-          <text class="info-value">{{product.note}}</text>
-        </view>
-      </view>
-  <!-- 节省信息已移除 -->
-    </view>
-  </view>
 
   <!-- 价格趋势折线图（canvas重绘） -->
   <view class="chart-card" wx:if="{{priceHistory.length > 1}}">
@@ -92,31 +60,47 @@
       <text class="history-count">共 {{priceHistoryCount}} 条</text>
     </view>
     
-    <view class="history-list">
+    <view 
+      wx:for="{{priceHistory}}" 
+      wx:key="id"
+      class="history-item-container"
+    >
       <view 
-        wx:for="{{priceHistory}}" 
-        wx:key="id"
-        class="history-item {{item.isCurrent ? 'current' : ''}}"
+        class="history-item {{item.isCurrent ? 'current' : ''}} {{item.swiping ? 'swiping' : ''}}"
         data-id="{{item.id}}"
+        data-index="{{index}}"
+        bindtouchstart="onTouchStart"
+        bindtouchmove="onTouchMove"
+        bindtouchend="onTouchEnd"
         bindtap="onHistoryItemTap"
       >
         <view class="history-info">
           <view class="history-date">{{item.date}}</view>
           <view class="history-location">{{item.location}}</view>
         </view>
-  <view class="history-price {{item.isMin ? 'savings-price' : ''}}">
-    <text>{{item.currency && item.currency.symbol || '¥'}}</text>{{item.currentPrice}}
-  </view>
+        <view class="history-price {{item.isMin ? 'savings-price' : ''}}">
+          <text>{{item.currencySymbol || '¥'}}</text>{{item.currentPrice}}
+        </view>
         <view wx:if="{{item.isCurrent}}" class="current-indicator">当前</view>
       </view>
+      <view 
+        class="edit-btn" 
+        data-id="{{item.id}}" 
+        catchtap="editHistoryItem"
+      >编辑</view>
+      <view 
+        class="delete-btn" 
+        data-id="{{item.id}}" 
+        catchtap="deleteProduct"
+      >删除</view>
     </view>
   </view>
 
   <!-- 操作按钮 -->
-  <view class="action-section">
-    <button class="action-btn btn-edit" bindtap="editProduct">编辑</button>
-    <button class="action-btn btn-delete" bindtap="deleteProduct">删除</button>
-  </view>
+  <!-- <view class="action-section"> -->
+  <!--   <button class="action-btn btn-edit" bindtap="editProduct">编辑</button> -->
+  <!--   <button class="action-btn btn-delete" bindtap="deleteProduct">删除</button> -->
+  <!-- </view> -->
 </view>
 
 <!-- 加载状态 -->

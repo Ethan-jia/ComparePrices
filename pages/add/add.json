@@ -1,6 +1,8 @@
 {
     "usingComponents": {
-        "navigation-bar": "/components/navigation-bar/navigation-bar"
+        "navigation-bar": "/components/navigation-bar/navigation-bar",
+        "dropdown-select": "/components/dropdown-select/dropdown-select",
+        "price-input": "/components/price-input/price-input"
     },
     "navigationStyle": "custom"
 }

@@ -8,12 +8,10 @@
  */
 const CURRENCIES = [
     { label: '人民币', symbol: '¥', code: 'CNY' },
+    { label: '林吉特', symbol: 'RM', code: 'MYR' },
     { label: '美元', symbol: '$', code: 'USD' },
     { label: '欧元', symbol: '€', code: 'EUR' },
     { label: '英镑', symbol: '£', code: 'GBP' },
-    { label: '日元', symbol: '¥', code: 'JPY' },
-    { label: '韩元', symbol: '₩', code: 'KRW' },
-    { label: '港币', symbol: 'HK$', code: 'HKD' }
 ];
 
 /**
@@ -24,7 +22,7 @@ function savePreferredCurrency(code) {
     try {
         wx.setStorageSync('preferred_currency', code);
     } catch (e) {
-        console.error('保存首选货币失败:', e);
+        // 保存首选货币失败
     }
 }
 
@@ -36,7 +34,7 @@ function getPreferredCurrencyCode() {
     try {
         return wx.getStorageSync('preferred_currency') || null;
     } catch (e) {
-        console.error('获取首选货币失败:', e);
+        // 获取首选货币失败
         return null;
     }
 }

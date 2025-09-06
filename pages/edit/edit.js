@@ -1,4 +1,12 @@
 // edit.js
+/**
+ * 编辑商品页面
+ * 
+ * 功能：
+ * 1. 编辑现有商品
+ * 2. 自动完成输入
+ * 3. 表单验证
+ */
 
 const { createProduct } = require('../../models/product');
 const { getAllProductNames, getAllLocations, getAllBrands } = require('../../services/fieldService');
@@ -9,48 +17,53 @@ const {
     savePreferredCurrency,
     getPreferredCurrencyIndex
 } = require('../../services/currencyService');
-const autoComplete = require('../../utils/autoComplete');
+const { getProductById, updateProduct, validateProduct } = require('../../services/productService');
 Page({
-    // 输入商品名，支持下拉筛选
+    // 空方法用于阻止事件冒泡
+    noop: function () { },
+
+    // 输入商品名，支持下拉筛选 - 使用dropdown-select组件
     onProductNameInput: function (e) {
         const input = e.detail.value;
-        const filtered = autoComplete.filterList(input, this.data.allProductNames);
         this.setData({
             productName: input,
-            filteredProductNames: filtered,
-            showProductNameDropdown: autoComplete.shouldShowDropdown(input, filtered)
+            showProductNameDropdown: true
         });
     },
 
-    // 选中下拉商品名
+    // 选中下拉商品名 - 使用dropdown-select组件
     onSelectProductName: function (e) {
-        const name = e.currentTarget.dataset.name;
+        const name = e.detail.value;
         this.setData({
             productName: name,
             showProductNameDropdown: false
         });
     },
 
-    // 聚焦显示下拉
+    // 聚焦显示下拉 - 使用dropdown-select组件
     onProductNameFocus: function () {
-        let filtered;
-        if (this.data.productName) {
-            filtered = autoComplete.filterList(this.data.productName, this.data.allProductNames);
-        } else {
-            filtered = this.data.allProductNames;
-        }
         this.setData({
-            filteredProductNames: filtered,
-            showProductNameDropdown: !!filtered.length
+            showProductNameDropdown: true
         });
     },
 
-    // 失焦隐藏下拉（延迟，避免点击事件被吞）
+    // 失焦处理 - 使用dropdown-select组件
     onProductNameBlur: function () {
-        setTimeout(() => {
-            this.setData({ showProductNameDropdown: false });
-        }, 200);
+        this.setData({
+            showProductNameDropdown: false
+        });
     },
+
+    // 处理页面点击事件，关闭所有下拉框
+    onPageTap: function (e) {
+        // 当点击页面空白区域时，关闭所有下拉框
+        this.setData({
+            showProductNameDropdown: false,
+            showLocationDropdown: false,
+            showBrandDropdown: false
+        });
+    },
+
     data: {
         productName: '',
         purchaseDate: '',
@@ -61,16 +74,14 @@ Page({
         note: '',
         isEditing: true,
         editId: null,
-        createTime: '',
-        updateTime: '',
-        allBrands: [],
-        filteredBrands: [],
-        showBrandDropdown: false,
-        allLocations: [],
-        filteredLocations: [],
-        showLocationDropdown: false,
+        allProductNames: [], // 所有历史商品名称
+        allLocations: [], // 所有历史地点
+        allBrands: [], // 所有历史品牌
+        showProductNameDropdown: false, // 是否显示商品名称下拉
+        showLocationDropdown: false, // 是否显示地点下拉
+        showBrandDropdown: false, // 是否显示品牌下拉
         // 货币选择相关
-        currencyIndex: 0, // 默认选择人民币
+        currencyIndex: 0, // 默认值会在onLoad时更新为用户首选货币
         currencies: CURRENCIES
     },
 
@@ -93,20 +104,19 @@ Page({
     },
 
     onShow: function () {
-        // 统一获取品牌、商品名、地点
-        const allBrands = getAllBrands();
+        // 获取所有历史数据
         const allProductNames = getAllProductNames();
         const allLocations = getAllLocations();
+        const allBrands = getAllBrands();
+
+        // 统一设置数据
         this.setData({
             allProductNames,
-            filteredProductNames: allProductNames,
-            showProductNameDropdown: false,
-            allBrands,
-            filteredBrands: allBrands,
-            showBrandDropdown: false,
             allLocations,
-            filteredLocations: allLocations,
-            showLocationDropdown: false
+            allBrands,
+            showProductNameDropdown: false,
+            showLocationDropdown: false,
+            showBrandDropdown: false
         });
         // 回显逻辑：优先用 options.id，其次用全局变量
         let editId = this._editIdFromOptions;
@@ -121,45 +131,36 @@ Page({
         }
     },
 
-    // 输入购买地点，支持下拉筛选
+    // 输入地点，支持下拉筛选 - 使用dropdown-select组件
     onLocationInput: function (e) {
         const input = e.detail.value;
-        const filtered = autoComplete.filterList(input, this.data.allLocations);
         this.setData({
             location: input,
-            filteredLocations: filtered,
-            showLocationDropdown: autoComplete.shouldShowDropdown(input, filtered)
+            showLocationDropdown: true
         });
     },
 
-    // 选中下拉地点
+    // 选中下拉地点 - 使用dropdown-select组件
     onSelectLocation: function (e) {
-        const loc = e.currentTarget.dataset.location;
+        const location = e.detail.value;
         this.setData({
-            location: loc,
+            location: location,
             showLocationDropdown: false
         });
     },
 
-    // 聚焦显示下拉
+    // 聚焦显示下拉 - 使用dropdown-select组件
     onLocationFocus: function () {
-        let filtered;
-        if (this.data.location) {
-            filtered = autoComplete.filterList(this.data.location, this.data.allLocations);
-        } else {
-            filtered = this.data.allLocations;
-        }
         this.setData({
-            filteredLocations: filtered,
-            showLocationDropdown: !!filtered.length
+            showLocationDropdown: true
         });
     },
 
-    // 失焦隐藏下拉（延迟，避免点击事件被吞）
+    // 失焦处理 - 使用dropdown-select组件
     onLocationBlur: function () {
-        setTimeout(() => {
-            this.setData({ showLocationDropdown: false });
-        }, 200);
+        this.setData({
+            showLocationDropdown: false
+        });
     },
 
     // 仅首次回显，防止二次清空
@@ -167,80 +168,79 @@ Page({
     // 这里补回 onShow 的后续逻辑
     // 由于 onShow 已经 return，需手动补回
 
-    // 加载商品数据用于编辑
+    /**
+     * 加载商品数据用于编辑
+     * @param {string} id - 商品ID
+     */
     loadProductForEdit: function (id) {
         try {
-            var products = wx.getStorageSync('products') || [];
-            var product = products.find(function (p) {
-                return p.id === id;
-            });
+            // 使用productService获取商品详情
+            const product = getProductById(id);
+
             if (product) {
-                // 处理货币信息
+                // 查找匹配的货币索引
                 const currencyIndex = findCurrencyIndex(product.currency);
 
+                // 设置表单数据，回显商品信息
                 this.setData({
-                    ...product,
                     isEditing: true,
                     editId: id,
                     productName: product.name || '',
                     purchaseDate: product.date || '',
                     location: product.location || '',
                     brand: product.brand || '',
+                    // 处理数值类型，避免显示undefined
                     originalPrice: product.originalPrice === undefined ? '' : product.originalPrice,
                     currentPrice: product.currentPrice === undefined ? '' : product.currentPrice,
-                    // category 字段已移除
                     note: product.note || '',
                     createTime: product.createTime || '',
                     currencyIndex: currencyIndex,
                     updateTime: product.updateTime || ''
                 });
+
+                this._hasEchoed = true; // 标记已经回显过数据
             } else {
-                wx.showToast({ title: '商品不存在', icon: 'none' });
+                // 商品不存在，显示提示并返回
+                wx.showToast({
+                    title: '商品不存在或已被删除',
+                    icon: 'none'
+                });
                 setTimeout(() => wx.navigateBack(), 1500);
             }
         } catch (error) {
             wx.showToast({ title: '加载失败', icon: 'none' });
         }
     },
-    // 输入品牌，支持下拉筛选
+    // 输入品牌，支持下拉筛选 - 使用dropdown-select组件
     onBrandInput: function (e) {
         const input = e.detail.value;
-        const filtered = autoComplete.filterList(input, this.data.allBrands);
         this.setData({
             brand: input,
-            filteredBrands: filtered,
-            showBrandDropdown: autoComplete.shouldShowDropdown(input, filtered)
+            showBrandDropdown: true
         });
     },
 
-    // 选中下拉品牌
+    // 选中下拉品牌 - 使用dropdown-select组件
     onSelectBrand: function (e) {
-        const brand = e.currentTarget.dataset.brand;
+        const brand = e.detail.value;
         this.setData({
             brand: brand,
             showBrandDropdown: false
         });
     },
 
-    // 聚焦显示下拉
+    // 聚焦显示下拉 - 使用dropdown-select组件
     onBrandFocus: function () {
-        let filtered;
-        if (this.data.brand) {
-            filtered = autoComplete.filterList(this.data.brand, this.data.allBrands);
-        } else {
-            filtered = this.data.allBrands;
-        }
         this.setData({
-            filteredBrands: filtered,
-            showBrandDropdown: !!filtered.length
+            showBrandDropdown: true
         });
     },
 
-    // 失焦隐藏下拉（延迟，避免点击事件被吞）
+    // 失焦处理 - 使用dropdown-select组件
     onBrandBlur: function () {
-        setTimeout(() => {
-            this.setData({ showBrandDropdown: false });
-        }, 200);
+        this.setData({
+            showBrandDropdown: false
+        });
     },
 
     // 输入事件
@@ -274,90 +274,98 @@ Page({
         savePreferredCurrency(currency.code);
     },
 
-    // 保存编辑
+    /**
+     * 保存编辑后的商品数据
+     * 使用productService处理数据存储逻辑
+     */
     saveProduct: function () {
-        if (!this.validateForm()) {
+        // 准备商品数据对象，进行基本处理
+        const productData = {
+            name: this.data.productName.trim(),
+            date: this.data.purchaseDate,
+            location: this.data.location.trim(),
+            brand: this.data.brand.trim(),
+            originalPrice: this.data.originalPrice ? parseFloat(this.data.originalPrice) : null,
+            currentPrice: parseFloat(this.data.currentPrice),
+            note: (this.data.note || '').trim(),
+            currency: getCurrencyByIndex(this.data.currencyIndex)
+        };
+
+        // 使用服务层验证表单数据
+        const validation = validateProduct(productData);
+        if (!validation.valid) {
+            wx.showToast({
+                title: validation.errors[0] || '表单验证失败',
+                icon: 'none',
+                duration: 2000
+            });
             return;
         }
+
         try {
-            var products = wx.getStorageSync('products') || [];
-            var index = products.findIndex(function (p) {
-                return p.id === this.data.editId;
-            }.bind(this));
-            if (index !== -1) {
-                var oldProduct = products[index];
-                var updated = createProduct(Object.assign({}, oldProduct, {
-                    name: this.data.productName.trim(),
-                    date: this.data.purchaseDate,
-                    location: this.data.location.trim(),
-                    brand: this.data.brand.trim(),
-                    originalPrice: this.data.originalPrice ? parseFloat(this.data.originalPrice) : null,
-                    currentPrice: parseFloat(this.data.currentPrice),
-                    // category 字段已移除
-                    note: this.data.note.trim(),
-                    currency: getCurrencyByIndex(this.data.currencyIndex),
-                    updateTime: Date.now()
-                }));
-                products[index] = updated;
-                wx.setStorageSync('products', products);
-                wx.showToast({ title: '更新成功', icon: 'success', duration: 1200 });
-                // 1. 保存后跳回详情页
-                setTimeout(() => {
-                    // 2. 让首页刷新（可用事件或全局变量，简单用事件）
-                    const pages = getCurrentPages();
-                    if (pages.length > 1 && pages[pages.length - 2].route === 'pages/detail/detail') {
-                        // 回到详情页并刷新
-                        wx.navigateBack({
-                            success: function () {
-                                // 通知详情页刷新
-                                const detailPage = getCurrentPages()[getCurrentPages().length - 1];
-                                if (detailPage && detailPage.onLoad) {
-                                    detailPage.onLoad({ id: updated.id });
-                                }
-                            }
-                        });
-                    } else {
-                        // 回到首页
-                        wx.switchTab({ url: '/pages/index/index' });
-                    }
-                }, 1200);
-            } else {
-                wx.showToast({ title: '商品不存在', icon: 'none' });
+            // 确保有编辑ID
+            if (!this.data.editId) {
+                throw new Error('商品ID不存在，无法更新');
             }
+
+            // 更新现有商品
+            const result = updateProduct(this.data.editId, productData);
+
+            if (!result) {
+                throw new Error('更新商品失败，请检查数据并重试');
+            }
+
+            // 操作成功，显示提示
+            wx.showToast({
+                title: '更新成功',
+                icon: 'success',
+                duration: 1500
+            });
+
+            // 保存后跳回详情页或首页
+            setTimeout(() => {
+                // 检查来源页面，决定跳转行为
+                const pages = getCurrentPages();
+
+                // 如果上一页是详情页，则返回详情页并刷新
+                if (pages.length > 1 && pages[pages.length - 2].route === 'pages/detail/detail') {
+                    // 回到详情页并刷新
+                    wx.navigateBack({
+                        success: function () {
+                            // 通知详情页刷新数据
+                            const detailPage = getCurrentPages()[getCurrentPages().length - 1];
+                            if (detailPage && detailPage.onLoad) {
+                                detailPage.onLoad({ id: this.data.editId });
+                            }
+                        }.bind(this)
+                    });
+                } else {
+                    // 回到首页（如果不是从详情页来）
+                    wx.switchTab({
+                        url: '/pages/index/index'
+                    });
+                }
+            }, 1500);
         } catch (error) {
-            wx.showToast({ title: '保存失败', icon: 'none' });
+            // 错误处理：显示详细的错误信息
+            console.error('保存商品失败:', error);
+
+            wx.showToast({
+                title: error.message || '保存失败，请重试',
+                icon: 'none',
+                duration: 2500
+            });
         }
     },
 
-    // 表单验证
-    validateForm: function () {
-        if (!this.data.productName.trim()) {
-            wx.showToast({ title: '请输入商品名称', icon: 'none' });
-            return false;
-        }
-        if (!this.data.purchaseDate) {
-            wx.showToast({ title: '请选择购买日期', icon: 'none' });
-            return false;
-        }
-        if (!this.data.location.trim()) {
-            wx.showToast({ title: '请输入购买地点', icon: 'none' });
-            return false;
-        }
-        if (!this.data.currentPrice || parseFloat(this.data.currentPrice) <= 0) {
-            wx.showToast({ title: '请输入有效的现价', icon: 'none' });
-            return false;
-        }
-        if (this.data.originalPrice && parseFloat(this.data.originalPrice) <= 0) {
-            wx.showToast({ title: '请输入有效的原价', icon: 'none' });
-            return false;
-        }
-        return true;
-    },
-
-    // 清空表单
+    /**
+     * 清空表单数据，重置为初始状态
+     * 用于用户主动清空表单
+     */
     clearForm: function () {
-        var today = new Date();
-        var dateStr = today.toISOString().split('T')[0];
+        // 设置今天日期为默认日期
+        const today = new Date();
+        const dateStr = today.toISOString().split('T')[0];
 
         // 获取用户首选货币索引
         const preferredCurrencyIndex = getPreferredCurrencyIndex();
@@ -369,13 +377,17 @@ Page({
             brand: '',
             originalPrice: '',
             currentPrice: '',
-            // category 字段已移除
             note: '',
+            // 在编辑页面保持编辑状态
             isEditing: true,
             editId: null,
             currencyIndex: preferredCurrencyIndex, // 使用用户首选货币
             createTime: '',
-            updateTime: ''
+            updateTime: '',
+            // 确保下拉框关闭
+            showProductNameDropdown: false,
+            showLocationDropdown: false,
+            showBrandDropdown: false
         });
     }
 });

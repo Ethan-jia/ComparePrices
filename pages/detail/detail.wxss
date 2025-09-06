@@ -302,14 +302,75 @@
   gap: 12px;
 }
 
+.history-item-container {
+  position: relative;
+  margin-bottom: 12px;
+  overflow: hidden;
+  width: 100%;
+}
+
 .history-item {
+  background: #F2F2F7; /* 恢复卡片的灰色背景 */
+  border-radius: 12px;
+  padding: 12px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px;
-  background: #F2F2F7;
-  border-radius: 8px;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: relative;
+  transition: transform 0.3s ease;
+  transform: translateX(0);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.history-item.swiping {
+  transform: translateX(-160px); /* 露出两个按钮宽度 */
+}
+
+.edit-btn {
+  position: absolute;
+  top: 0;
+  right: -80px; /* 默认位置在卡片右侧 */
+  width: 80px;
+  height: 100%;
+  background: #007AFF;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  z-index: 10;
+  border-radius: 0;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 0;
+  right: -160px; /* 默认位置在编辑按钮右侧 */
+  width: 80px;
+  height: 100%;
+  background: #FF3B30;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  z-index: 10;
+  border-radius: 0 12px 12px 0; /* 右侧圆角 */
+}
+
+/* 当 history-item 处于 swiping 状态时，显示按钮 */
+.history-item-container .history-item.swiping ~ .edit-btn {
+  right: 80px; /* 编辑按钮紧贴卡片右侧 */
+}
+
+.history-item-container .history-item.swiping ~ .delete-btn {
+  right: 0; /* 删除按钮紧贴编辑按钮右侧 */
 }
 
 .history-item.current {
