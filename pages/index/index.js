@@ -29,7 +29,9 @@ function generateTestProducts() {
   // 使用服务获取位置和品牌，如果没有，则使用默认值
   const locations = getAllLocations().length > 0
     ? getAllLocations()
-    : ['家乐福', '永辉超市', '盒马', '本地菜场', '便利店', '沃尔玛', '京东', '天猫'];
+    : [
+      'Superstore', 'A1超市', '天天超市'
+    ];
 
   const brands = getAllBrands().length > 0
     ? getAllBrands()
@@ -47,6 +49,7 @@ function generateTestProducts() {
   for (let i = 1; i <= 100; i++) {
     // 随机生成商品数据
     const name = commonProducts[i % commonProducts.length];
+    // const name = "牛奶"
     const originalPrice = parseFloat((Math.random() * 30 + 5).toFixed(2));
     const currentPrice = parseFloat((originalPrice - Math.random() * 5).toFixed(2));
     const date = `2025-${String((i % 12) + 1).padStart(2, '0')}-${String((i % 28) + 1).padStart(2, '0')}`;

@@ -1,29 +1,36 @@
 /**
  * 商品详情页
- *  // 品牌省略  // 品牌省略显示（  // 店铺省略显示（如"苏宁易购旗舰店"→"苏...店"）
+ * 1.   // 店铺省略  // 品牌省略显示（如"华为科技旗舰店"→"华...店"），适用于中英文
+  ellipsisBrand: function (str) {
+    if (!str) return '';
+    if (str.length <= 4) return str;
+    
+    // 检查是否为纯英文
+    const isEnglish = /^[a-zA-Z\s]+$/.test(str);
+    
+    if (isEnglish) {
+      // 英文品牌名称，保留首尾各1-2个字符
+      return str.slice(0, 2) + '...' + str.slice(-1);
+    } else {
+      // 中文或混合，保留首两字和末字
+      return str.slice(0, 2) + '...' + str.slice(-1);
+    }
+  },宁易购旗舰店"→"苏...店"），适用于中英文
   ellipsisLocation: function (str) {
     if (!str) return '';
     if (str.length <= 5) return str;
-    // 只保留首字和末两字，中间省略
-    return str.slice(0, 1) + '...' + str.slice(-2);
-  },旗舰店"→"华...店"）
-  ellipsisBrand: function (str) {
-    if (!str) return '';
-    if (str.length <= 4) return str;
-    // 只保留首字和末两字，中间省略
-    return str.slice(0, 2) + '..' + str.slice(-1);
-  },为科技旗舰店"→"华...店"）
-  ellipsisBrand: function (str) {
-    if (!str) return '';
-    if (str.length <= 4) return str;
-    // 只保留首字和末字，中间省略
-    return str.slice(0, 2) + '..' + str.slice(-1);
+    
+    // 检查是否为纯英文
+    const isEnglish = /^[a-zA-Z\s]+$/.test(str);
+    
+    if (isEnglish) {
+      // 英文店铺名称，保留首尾各2个字符
+      return str.slice(0, 2) + '...' + str.slice(-2);
+    } else {
+      // 中文或混合，保留首字和末两字
+      return str.slice(0, 1) + '...' + str.slice(-2);
+    }
   },
-  // 店铺省略显示（如"苏宁易购旗舰店"→"苏...店"）
-  ellipsisLocation: function (str) {
-    if (!str) return '';
-    if (str.length <= 5) return str;
-    // 只保留首字和末两字，中间省略* 1. 展示商品详情
  * 2. 显示价格历史
  * 3. 提供编辑和删除功能
  * 4. 过滤价格历史记录
@@ -55,6 +62,8 @@ Page({
     locationList: [],
     selectedBrand: '',
     selectedLocation: '',
+    originalSelectedBrand: '', // 存储原始品牌名称，用于筛选
+    originalSelectedLocation: '', // 存储原始店铺名称，用于筛选
     brandIndex: 0,
     locationIndex: 0,
     touchStartX: 0,
@@ -76,6 +85,8 @@ Page({
         filterType: 'all',
         selectedBrand: '',
         selectedLocation: '',
+        originalSelectedBrand: '',
+        originalSelectedLocation: '',
         brandIndex: 0,
         locationIndex: 0
       }, () => {
@@ -137,8 +148,10 @@ Page({
     this.setData({
       brandIndex: index,
       selectedBrand: this.ellipsisBrand(brand),
+      originalSelectedBrand: brand, // 保存原始品牌名称
       filterType: 'brand',
       selectedLocation: '',
+      originalSelectedLocation: '', // 清空店铺筛选
       locationIndex: 0
     }, () => {
       this.loadPriceHistory(this.data.product.name);
@@ -165,13 +178,20 @@ Page({
       return;
     }
 
+
+    // 确保清晰存储原始名称和显示名称
+    const displayLocation = this.ellipsisLocation(location);
+
     this.setData({
       locationIndex: index,
-      selectedLocation: this.ellipsisLocation(location),
+      selectedLocation: displayLocation,
+      originalSelectedLocation: location, // 保存原始店铺名称
       filterType: 'location',
       selectedBrand: '',
+      originalSelectedBrand: '', // 清空品牌筛选
       brandIndex: 0
     }, () => {
+      // 输出设置后的值，用于调试
       this.loadPriceHistory(this.data.product.name);
     });
   },
@@ -262,20 +282,23 @@ Page({
         newFilterType = 'all';
         newSelectedBrand = '';
         newBrandIndex = 0;
+        this.setData({ originalSelectedBrand: '' });
         resetFilter = true;
       }
       // 如果有品牌数据，但当前选择的品牌不在列表中
       else if (brandList.length > 0 && this.data.filterType === 'brand' &&
-        this.data.selectedBrand && !brandList.includes(this.data.selectedBrand)) {
-        // 尝试找到近似匹配
-        const similarBrand = brandList.find(b => b.includes(this.data.selectedBrand) ||
-          this.data.selectedBrand.includes(b));
+        this.data.originalSelectedBrand && !brandList.includes(this.data.originalSelectedBrand)) {
+        // 尝试找到近似匹配 - 使用原始品牌名称而非缩略名称
+        const similarBrand = brandList.find(b => b.includes(this.data.originalSelectedBrand) ||
+          this.data.originalSelectedBrand.includes(b));
         if (similarBrand) {
           newSelectedBrand = this.ellipsisBrand(similarBrand);
           newBrandIndex = brandList.indexOf(similarBrand);
+          this.setData({ originalSelectedBrand: similarBrand });
         } else {
           newSelectedBrand = '';
           newBrandIndex = 0;
+          this.setData({ originalSelectedBrand: '' });
         }
         resetFilter = true;
       }
@@ -285,20 +308,23 @@ Page({
         newFilterType = 'all';
         newSelectedLocation = '';
         newLocationIndex = 0;
+        this.setData({ originalSelectedLocation: '' });
         resetFilter = true;
       }
       // 如果有店铺数据，但当前选择的店铺不在列表中
       else if (locationList.length > 0 && this.data.filterType === 'location' &&
-        this.data.selectedLocation && !locationList.includes(this.data.selectedLocation)) {
-        // 尝试找到近似匹配
-        const similarLocation = locationList.find(l => l.includes(this.data.selectedLocation) ||
-          this.data.selectedLocation.includes(l));
+        this.data.originalSelectedLocation && !locationList.includes(this.data.originalSelectedLocation)) {
+        // 尝试找到近似匹配 - 使用原始店铺名称而非缩略名称
+        const similarLocation = locationList.find(l => l.includes(this.data.originalSelectedLocation) ||
+          this.data.originalSelectedLocation.includes(l));
         if (similarLocation) {
           newSelectedLocation = this.ellipsisLocation(similarLocation);
           newLocationIndex = locationList.indexOf(similarLocation);
+          this.setData({ originalSelectedLocation: similarLocation });
         } else {
           newSelectedLocation = '';
           newLocationIndex = 0;
+          this.setData({ originalSelectedLocation: '' });
         }
         resetFilter = true;
       }
@@ -316,17 +342,21 @@ Page({
 
       // 应用过滤条件
       const filterType = this.data.filterType;
-      const selectedBrand = this.data.selectedBrand;
-      const selectedLocation = this.data.selectedLocation;
+      const originalSelectedBrand = this.data.originalSelectedBrand;
+      const originalSelectedLocation = this.data.originalSelectedLocation;
       let filtered = productsWithSameName;
 
       // 根据筛选类型应用不同的过滤条件
-      if (filterType === 'brand' && selectedBrand) {
-        // 按品牌筛选
-        filtered = productsWithSameName.filter(p => p.brand === selectedBrand);
-      } else if (filterType === 'location' && selectedLocation) {
-        // 按购买地点筛选
-        filtered = productsWithSameName.filter(p => p.location === selectedLocation);
+      if (filterType === 'brand' && originalSelectedBrand) {
+        // 按品牌筛选，使用原始品牌名称
+        filtered = productsWithSameName.filter(p => {
+          return p.brand === originalSelectedBrand;
+        });
+      } else if (filterType === 'location' && originalSelectedLocation) {
+        // 按购买地点筛选，使用原始店铺名称
+        filtered = productsWithSameName.filter(p => {
+          return p.location === originalSelectedLocation;
+        });
       }
 
       // 按日期降序排序（从新到旧）
@@ -590,4 +620,38 @@ Page({
   },
 
   // deleteHistoryItem 方法已合并到 deleteProduct 方法中
+
+  // 跳转到添加页面
+  goToAddPage: function () {
+    if (!this.data.product || !this.data.product.name) {
+      wx.showToast({
+        title: '商品信息缺失',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 显示加载提示
+    wx.showToast({
+      title: '正在跳转...',
+      icon: 'loading',
+      duration: 500
+    });
+
+    // 使用encodeURIComponent确保参数正确传递
+    const encodedName = encodeURIComponent(this.data.product.name);
+
+    // 延迟跳转，确保UI反馈
+    setTimeout(() => {
+      wx.switchTab({
+        url: '/pages/add/add',
+        success: () => {
+          // 跳转成功后，设置全局数据以便add页面获取
+          const app = getApp();
+          app.globalData = app.globalData || {};
+          app.globalData.prefilledProductName = this.data.product.name;
+        }
+      });
+    }, 300);
+  },
 });

@@ -99,10 +99,22 @@ Page({
         // 仅编辑跳转时回显，其它场景始终新增
         const app = getApp();
         const editProduct = app.globalData && app.globalData.editProduct;
+        // 检查是否有预填充的商品名称
+        const prefilledProductName = app.globalData && app.globalData.prefilledProductName;
+
         // 获取所有历史数据
         const allProductNames = getAllProductNames();
         const allLocations = getAllLocations();
         const allBrands = getAllBrands();
+
+        // 如果有预填充的商品名称，则设置
+        if (prefilledProductName) {
+            this.setData({
+                productName: prefilledProductName
+            });
+            // 使用后清除，避免重复使用
+            app.globalData.prefilledProductName = null;
+        }
 
         // 统一设置数据
         this.setData({

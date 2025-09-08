@@ -27,16 +27,19 @@
 
 /* 搜索栏 */
 .search-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  margin: 0;
+  border-radius: 0;
   background: #FFFFFF;
   padding: 16px;
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid #E5E5EA;
-  flex-shrink: 0;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-top: 1px solid #E5E5EA;
 }
 
 .search-box {
@@ -85,11 +88,18 @@
 
 /* 筛选面板 */
 .filter-panel {
+  position: fixed;
+  bottom: 60px; /* 搜索栏上方 */
+  left: 10px;
+  right: 10px;
+  z-index: 999;
+  max-height: 200px; /* 限制高度 */
+  overflow-y: auto; /* 超出部分滚动 */
+  border-radius: 12px;
   background: #FFFFFF;
   padding: 16px;
   border-bottom: 1px solid #E5E5EA;
   flex-shrink: 0;
-  border-radius: 12px;
   margin-bottom: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }

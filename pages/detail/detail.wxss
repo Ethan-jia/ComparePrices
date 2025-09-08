@@ -500,3 +500,21 @@
   font-size: 16px;
   color: #8A8A8A;
 }
+
+/* 添加按钮样式 */
+.add-button-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.add-button {
+  background-color: #007AFF;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

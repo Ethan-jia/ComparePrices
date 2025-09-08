@@ -100,9 +100,5 @@
   </view>
 
   <!-- 测试数据按钮，直接显示在+号下方，便于开发测试，上线可注释 -->
-  <!-- <view class="test-btn" catchtap="onGenerateTestData"> -->
-  <!--   <text>生成100条测试数据</text> -->
-  <!-- </view> -->
-
-
+  <!-- <view class="test-btn" catchtap="onGenerateTestData"><text>生成100条测试数据</text></view> -->
 </view>
