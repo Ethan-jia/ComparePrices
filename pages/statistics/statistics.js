@@ -32,8 +32,12 @@ Page({
     ]
   },
 
-  onLoad: function () {
-    this.loadStatistics();
+  onLoad: function (options) {
+    if (options.shareId === 'shared-products') {
+      this.loadSharedData();
+    } else {
+      this.loadStatistics();
+    }
   },
 
   onShow: function () {
@@ -220,58 +224,6 @@ Page({
     });
   },
 
-  /**
-   * 导出所有商品数据到剪贴板
-   * 将数据转换为JSON格式，方便用户备份
-   */
-  exportData: function () {
-    try {
-      // 使用服务层获取所有商品
-      const products = getAllProducts();
-      const dataStr = JSON.stringify(products, null, 2);
-
-      wx.setClipboardData({
-        data: dataStr,
-        success: () => {
-          wx.showToast({
-            title: '数据已复制到剪贴板',
-            icon: 'success'
-          });
-        }
-      });
-    } catch (error) {
-      console.error('导出数据失败:', error);
-      wx.showToast({
-        title: '导出失败',
-        icon: 'none'
-      });
-    }
-  },
-
-  /**
-   * 清空所有商品数据
-   * 显示确认对话框，防止误操作
-   */
-  clearData: function () {
-    wx.showModal({
-      title: '确认清空',
-      content: '确定要清空所有数据吗？此操作不可恢复！',
-      success: (res) => {
-        if (res.confirm) {
-          // 使用服务层清空存储
-          saveAllProducts([]);
-
-          // 重新加载统计数据
-          this.loadStatistics();
-
-          wx.showToast({
-            title: '数据已清空',
-            icon: 'success'
-          });
-        }
-      }
-    });
-  },
 
   /**
    * 跳转到商品详情页面
@@ -290,5 +242,138 @@ Page({
         icon: 'none'
       });
     }
-  }
+  },
+
+  /**
+   * 读取数据
+   */
+  readData: function () {
+    try {
+      const products = getAllProducts();
+      wx.showToast({
+        title: `读取到 ${products.length} 条数据`,
+        icon: 'success',
+      });
+    } catch (error) {
+      wx.showToast({
+        title: '读取数据失败',
+        icon: 'none',
+      });
+    }
+  },
+
+  /**
+   * 分享数据
+   */
+  shareData: function () {
+    try {
+      const products = getAllProducts();
+      const dataString = JSON.stringify(products);
+
+      // 将数据写入临时文件
+      const filePath = `${wx.env.USER_DATA_PATH}/products.json`;
+      wx.getFileSystemManager().writeFile({
+        filePath,
+        data: dataString,
+        encoding: 'utf8',
+
+        success: () => {
+          wx.showShareMenu({
+            withShareTicket: true,
+            success: () => {
+              wx.showToast({
+                title: '数据已准备好，请点击右上角分享',
+                icon: 'success',
+              });
+            },
+            fail: () => {
+              wx.showToast({
+                title: '分享菜单打开失败',
+                icon: 'none',
+              });
+            },
+          });
+        },
+        fail: () => {
+          wx.showToast({
+            title: '生成文件失败',
+            icon: 'none',
+          });
+        },
+      });
+    } catch (error) {
+      wx.showToast({
+        title: '分享数据失败',
+        icon: 'none',
+      });
+    }
+  },
+
+  /**
+   * 设置分享内容
+   */
+  onShareAppMessage: function () {
+    const shareId = `share-${Date.now()}`;
+    const products = wx.getStorageSync('products') || [];
+
+    try {
+      wx.setStorageSync(shareId, products);
+      console.log('分享数据已存储:', { shareId, products });
+    } catch (error) {
+      console.error('存储分享数据失败:', error);
+    }
+
+    return {
+      title: '分享商品数据',
+      path: `/pages/statistics/statistics?shareId=${shareId}`,
+      imageUrl: '',
+    };
+  },
+
+  /**
+   * 读取分享卡片的数据时候调用
+   */
+  onLoad: function (options) {
+    if (options.shareId) {
+      this.loadSharedData(options.shareId);
+    }
+  },
+
+  /**
+   * 读取分享卡片的数据时候调用:  加载分享的数据
+   */
+  loadSharedData: function (shareId) {
+    try {
+      console.log('加载分享数据，shareId:', shareId);
+      const sharedData = wx.getStorageSync(shareId);
+      console.log('加载分享数据，sharedData:', sharedData);
+      if (sharedData) {
+        const localData = wx.getStorageSync('products') || [];
+        const mergedData = [...localData, ...sharedData];
+        const uniqueData = mergedData.reduce((acc, item) => {
+          if (!acc.find(product => product.id === item.id)) {
+            acc.push(item);
+          }
+          return acc;
+        }, []);
+        wx.setStorageSync('products', uniqueData);
+        wx.showToast({
+          title: '数据加载成功',
+          icon: 'success',
+        });
+        this.setData({ products: uniqueData });
+      } else {
+        wx.showToast({
+          title: '没有可加载的数据',
+          icon: 'none',
+        });
+      }
+    } catch (error) {
+      wx.showToast({
+        title: '加载数据失败',
+        icon: 'none',
+      });
+      console.error('加载分享数据失败:', error);
+    }
+  },
 });

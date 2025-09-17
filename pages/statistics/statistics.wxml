@@ -90,4 +90,10 @@
   <!--   <button class="action-btn btn-export" bindtap="exportData">导出数据</button> -->
   <!--   <button class="action-btn btn-clear" bindtap="clearData">清空数据</button> -->
   <!-- </view> -->
+
+  <!-- 分享和读取数据按钮 -->
+  <view class="action-buttons">
+    <button class="action-btn btn-read" bindtap="readData">读取数据</button>
+    <button class="action-btn btn-share" bindtap="shareData">分享数据</button>
+  </view>
 </view>

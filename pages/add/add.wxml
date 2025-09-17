@@ -129,7 +129,7 @@
 <!-- 固定在底部的操作按钮 -->
 <view class="fixed-form-actions">
   <button class="btn btn-secondary" bindtap="clearForm">清空</button>
-  <button class="btn btn-primary" bindtap="saveProduct">
+  <button class="btn btn-primary" bindtap="onSubmit">
     {{isEditing ? '更新' : '保存'}}
   </button>
 </view>

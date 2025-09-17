@@ -188,5 +188,3 @@
 .btn-secondary:active {
   background: #7A7A7F; /* 深灰色 */
 }
-
-/* 分类选择器相关样式已移除，因为已不再需要 */

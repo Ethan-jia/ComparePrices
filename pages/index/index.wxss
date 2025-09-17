@@ -12,17 +12,46 @@
   opacity: 0.7;
   transition: opacity 0.2s;
 }
+
 .test-btn:active {
   opacity: 1;
 }
-/* index.wxss */
-.container {
-  padding: 16px;
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
   background-color: #F2F2F7;
-  min-height: 100vh;
+  position: relative;
+}
+
+/* 商品列表 */
+.product-list {
+  flex: 1;
+  padding-bottom: 86px; /* 只保留底部间距以避免被搜索栏遮挡 */
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+}
+
+/* 置顶内容容器 */
+.pinned-container {
+  padding-top: 12px;
+  order: -1;  /* 确保置顶内容在最上方 */
+  display: flex;
+  flex-direction: column;
+}
+
+/* 非置顶内容容器 */
+.unpinned-container {
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column-reverse;  /* 非置顶内容从下往上排列 */
+  flex: 1;  /* 占据剩余空间 */
+}
+
+.product-card-container {
+  margin-bottom: 4px;  /* 从12px减小到8px，让卡片之间更紧凑 */
 }
 
 /* 搜索栏 */
@@ -35,7 +64,7 @@
   margin: 0;
   border-radius: 0;
   background: #FFFFFF;
-  padding: 16px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -89,12 +118,12 @@
 /* 筛选面板 */
 .filter-panel {
   position: fixed;
-  bottom: 60px; /* 搜索栏上方 */
+  bottom: 60px;
   left: 10px;
   right: 10px;
   z-index: 999;
-  max-height: 200px; /* 限制高度 */
-  overflow-y: auto; /* 超出部分滚动 */
+  max-height: 200px;
+  overflow-y: auto;
   border-radius: 12px;
   background: #FFFFFF;
   padding: 16px;
@@ -155,62 +184,34 @@
   color: #FFFFFF;
 }
 
-/* 商品列表 */
-.product-list {
-  flex: 1;
-  padding: 0;
-}
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 20px;
-  text-align: center;
-}
-
-.empty-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-
-.empty-text {
-  font-size: 18px;
-  color: #8A8A8A;
-  margin-bottom: 8px;
-}
-
-.empty-hint {
-  font-size: 14px;
-  color: #C7C7CC;
-}
-
-/* 商品卡片容器 */
+/* 商品卡片样式 */
 .product-card-container {
   position: relative;
-  margin-bottom: 12px;
+  margin: 1px 16px;
+  width: calc(100% - 32px);
+  border-radius: 12px;
+  background: transparent;
   overflow: hidden;
-  width: 100%;
 }
 
 .product-card {
   background: #FFFFFF;
   border-radius: 12px;
-  padding: 12px;
+  padding: 16px;  /* 从20px减小到16px，让卡片内部更紧凑 */
   display: flex;
   align-items: center;
-  gap: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   position: relative;
-  transition: transform 0.3s ease;
-  transform: translateX(0);
   width: 100%;
   box-sizing: border-box;
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.product-card.swiping {
-  transform: translateX(-80px);
+.product-card.swiping-left {
+  transform: translateX(-120px);
 }
 
 .product-info {
@@ -227,6 +228,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+.pin-icon {
+  margin-left: 8rpx;
+  font-size: 28rpx;
+  line-height: 1;
 }
 
 .product-meta {
@@ -236,7 +245,8 @@
   flex-wrap: wrap;
 }
 
-.product-date, .product-location {
+.product-date,
+.product-location {
   font-size: 12px;
   color: #8A8A8A;
   overflow: hidden;
@@ -257,23 +267,24 @@
 
 .product-price {
   text-align: right;
-  min-width: 70px;
+  min-width: 80px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  justify-content: center;
 }
 
 .current-price {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   color: #000000;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
   line-height: 1.2;
 }
 
 .original-price {
-  font-size: 11px;
+  font-size: 12px;
   color: #8A8A8A;
   text-decoration: line-through;
   margin-bottom: 2px;
@@ -281,33 +292,50 @@
 }
 
 .discount {
-  font-size: 11px;
+  font-size: 12px;
   color: #34C759;
   font-weight: 500;
   line-height: 1.2;
+  background: rgba(52, 199, 89, 0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
 }
 
-/* 左滑删除按钮 */
-.delete-btn {
+/* 左滑操作按钮 */
+.action-buttons {
   position: absolute;
   top: 0;
-  right: -80px;
-  width: 80px;
+  right: 0;
   height: 100%;
-  background: #FF3B30;
+  width: 120px;
+  display: flex;
+  z-index: 0;
+  transform: translateX(120px);
+  transition: transform 0.3s ease;
+}
+
+.pin-btn,
+.delete-btn {
+  height: 100%;
+  width: 60px;
   color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 14px;
   font-weight: 500;
-  transition: right 0.3s ease;
-  z-index: 10;
-  border-radius: 0 12px 12px 0;
 }
 
-.product-card-container .product-card.swiping + .delete-btn {
-  right: 0;
+.pin-btn {
+  background: #007AFF;
+}
+
+.delete-btn {
+  background: #FF3B30;
+}
+
+.product-card.swiping-left ~ .action-buttons {
+  transform: translateX(0);
 }
 
 /* 悬浮添加按钮 */
@@ -334,4 +362,29 @@
 
 .fab:active {
   transform: scale(0.95);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.empty-text {
+  font-size: 18px;
+  color: #8A8A8A;
+  margin-bottom: 8px;
+}
+
+.empty-hint {
+  font-size: 14px;
+  color: #C7C7CC;
 }

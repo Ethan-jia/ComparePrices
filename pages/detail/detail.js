@@ -53,6 +53,24 @@ Page({
     // 只保留首字和末两字，中间省略
     return str.slice(0, 1) + '...' + str.slice(-2);
   },
+  /**
+   * 格式化日期，根据上下文决定是否显示年份
+   * @param {string} dateStr - 日期字符串 (YYYY-MM-DD 格式)
+   * @param {boolean} [showYear=true] - 是否显示年份
+   * @returns {string} 格式化后的日期
+   */
+  formatDate: function (dateStr, showYear = true) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    if (showYear) {
+      return dateStr; // 返回完整日期 YYYY-MM-DD
+    } else {
+      return `${month}-${day}`; // 只返回 MM-DD
+    }
+  },
+
   data: {
     product: null,
     priceHistory: [],
@@ -366,6 +384,13 @@ Page({
 
       const priceHistoryCount = filtered.length;
 
+      // 当记录较多时，使用简化的日期格式（只显示月日）
+      const shouldShowYear = filtered.length <= 1;
+      filtered = filtered.map(item => ({
+        ...item,
+        displayDate: this.formatDate(item.date, shouldShowYear)
+      }));
+
       // 限制展示数量
       if (filtered && filtered.length > 20) filtered = filtered.slice(0, 20);
 
@@ -533,13 +558,26 @@ Page({
                 icon: 'success'
               });
 
-              // 刷新页面内容，保持筛选，并回到顶部
               setTimeout(() => {
+                // 删除后重新加载价格历史
                 this.loadPriceHistory(productName, null);
-                wx.pageScrollTo({
-                  scrollTop: 0,
-                  duration: 300
-                });
+                wx.pageScrollTo({ scrollTop: 0, duration: 300 });
+
+                // 检查是否已无数据，若无则跳转首页并刷新
+                const priceHistoryData = getPriceHistoryByName(productName);
+                if (!priceHistoryData.products || priceHistoryData.products.length === 0) {
+                  wx.switchTab({
+                    url: '/pages/index/index',
+                    success: function () {
+                      // 触发首页刷新
+                      const pages = getCurrentPages();
+                      const indexPage = pages.find(p => p.route === 'pages/index/index');
+                      if (indexPage && typeof indexPage.loadProducts === 'function') {
+                        indexPage.loadProducts();
+                      }
+                    }
+                  });
+                }
               }, 500);
             } else {
               wx.showToast({
@@ -631,25 +669,19 @@ Page({
       return;
     }
 
-    // 显示加载提示
-    wx.showToast({
-      title: '正在跳转...',
-      icon: 'loading',
-      duration: 500
-    });
+    // 设置全局数据
+    const app = getApp();
+    app.globalData = app.globalData || {};
+    app.globalData.prefilledProductName = this.data.product.name;
+    app.globalData.productSticky = this.data.product.isSticky || false; // 传递置顶状态
 
-    // 使用encodeURIComponent确保参数正确传递
-    const encodedName = encodeURIComponent(this.data.product.name);
-
-    // 延迟跳转，确保UI反馈
+    // 延迟跳转到添加页面
     setTimeout(() => {
-      wx.switchTab({
+      wx.reLaunch({
         url: '/pages/add/add',
         success: () => {
-          // 跳转成功后，设置全局数据以便add页面获取
-          const app = getApp();
-          app.globalData = app.globalData || {};
-          app.globalData.prefilledProductName = this.data.product.name;
+        },
+        fail: (error) => {
         }
       });
     }, 300);

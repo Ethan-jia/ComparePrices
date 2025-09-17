@@ -1,434 +1,416 @@
-/**
- * 首页
- * 
- * 功能：
- * 1. 显示商品列表
- * 2. 支持搜索和过滤
- * 3. 商品排序
- * 4. 添加、编辑和删除商品
- */
+const { getAllProducts, deleteProduct, searchProducts, sortProducts, saveAllProducts } = require('../../services/productService')
+const { getDefaultCurrency } = require('../../services/currencyService')
+const { getAllProductNames, getAllLocations, getAllBrands } = require('../../services/fieldService')
 
-const { getAllProducts, deleteProduct, searchProducts, sortProducts, saveAllProducts } = require('../../services/productService');
-const { getDefaultCurrency } = require('../../services/currencyService');
-const { getAllProductNames, getAllLocations, getAllBrands, getRecordCountByProductName } = require('../../services/fieldService');
-
-/**
- * 一键生成测试数据
- * 生成100条随机的商品价格记录用于演示
- */
-function generateTestProducts() {
-  const now = Date.now();
-
-  // 定义测试数据的基础内容
-  const commonProducts = [
-    '牛奶', '苹果', '鸡蛋', '大米', '面包',
-    '矿泉水', '洗发水', '牙膏', '纸巾', '洗衣液',
-    '可口可乐', '雪碧', '酸奶', '橙汁', '火腿肠'
-  ];
-
-  // 使用服务获取位置和品牌，如果没有，则使用默认值
-  const locations = getAllLocations().length > 0
-    ? getAllLocations()
-    : [
-      'Superstore', 'A1超市', '天天超市'
-    ];
-
-  const brands = getAllBrands().length > 0
-    ? getAllBrands()
-    : ['伊利', '蒙牛', '农夫山泉', '可口可乐', '百事', '三元', '光明', '汇源', '统一', '娃哈哈', '洁柔', '蓝月亮', '宝洁', '联合利华', '自有品牌'];
-
-  // 清除现有测试数据
-  const existingProducts = getAllProducts();
-  existingProducts.forEach(product => {
-    if (product.id.startsWith('test')) {
-      deleteProduct(product.id);
-    }
-  });
-
-  // 生成新测试数据
-  for (let i = 1; i <= 100; i++) {
-    // 随机生成商品数据
-    const name = commonProducts[i % commonProducts.length];
-    // const name = "牛奶"
-    const originalPrice = parseFloat((Math.random() * 30 + 5).toFixed(2));
-    const currentPrice = parseFloat((originalPrice - Math.random() * 5).toFixed(2));
-    const date = `2025-${String((i % 12) + 1).padStart(2, '0')}-${String((i % 28) + 1).padStart(2, '0')}`;
-    const location = locations[i % locations.length];
-    const brand = brands[i % brands.length];
-    const note = i % 7 === 0 ? '促销活动' : '';
-    const currency = getDefaultCurrency();
-
-    // 使用productService添加产品
-    const product = {
-      id: 'test' + i,
-      name,
-      date,
-      location,
-      brand,
-      originalPrice,
-      currentPrice,
-      currency,
-      note,
-      createTime: now - 86400000 * (100 - i),
-      updateTime: now - 86400000 * (100 - i)
-    };
-
-    // 直接保存到存储，不触发添加价格历史逻辑
-    const products = getAllProducts();
-    products.push(product);
-    saveAllProducts(products);
-  }
-
-  wx.showToast({ title: '测试数据已生成', icon: 'success' });
-}
-
-// index.js
 Page({
-  generateTestProducts,
   data: {
     searchKeyword: '',
     products: [],
     filteredProducts: [],
     showFilter: false,
     touchStartX: 0,
-    touchStartY: 0,
     currentSwipeIndex: -1,
-    sortBy: 'dateDesc', // 默认按日期倒序排序（最新优先）
-    // showTestBtn: false // 测试按钮默认隐藏
+    sortBy: 'dateDesc'
   },
 
-  onLoad: function () {
-    // 生成一批生活化商品数据并持久化（仅首次或无数据时）
-    // let products = wx.getStorageSync('products') || [];
-    // if (!products || products.length < 100) {
-    //   generateTestProducts();
-    // }
-    this.loadProducts();
+  onLoad() {
+    this.loadProducts()
   },
 
-  onShow: function () {
-    // 每次页面显示时重新加载产品数据，确保数据始终是最新的
-    this.loadProducts();
+  onShow() {
+    this.loadProducts()
+  },
 
-    // 长按右下角+号显示测试按钮
-    if (typeof this.data.showTestBtn === 'undefined') {
-      this.setData({ showTestBtn: false });
+  onGenerateTestData() {
+    const now = Date.now()
+    const commonProducts = ['牛奶', '苹果', '鸡蛋', '大米', '面包']
+    const locations = ['Superstore', 'A1超市', '天天超市']
+    const brands = ['伊利', '蒙牛', '农夫山泉', '可口可乐', '百事']
+
+    // 清除现有测试数据
+    const existingProducts = getAllProducts()
+    existingProducts.forEach(product => {
+      if (product.id.startsWith('test')) {
+        deleteProduct(product.id)
+      }
+    })
+
+    // 生成新测试数据
+    for (let i = 1; i <= 100; i++) {
+      const product = {
+        id: 'test' + i,
+        name: commonProducts[i % commonProducts.length],
+        date: `2025-${String((i % 12) + 1).padStart(2, '0')}-${String((i % 28) + 1).padStart(2, '0')}`,
+        location: locations[i % locations.length],
+        brand: brands[i % brands.length],
+        originalPrice: parseFloat((Math.random() * 30 + 5).toFixed(2)),
+        currentPrice: parseFloat((Math.random() * 30 + 5).toFixed(2)),
+        currency: getDefaultCurrency(),
+        note: i % 7 === 0 ? '促销活动' : '',
+        createTime: now - 86400000 * (100 - i),
+        updateTime: now - 86400000 * (100 - i)
+      }
+
+      const products = getAllProducts()
+      products.push(product)
+      saveAllProducts(products)
     }
+
+    this.loadProducts()
+    wx.showToast({
+      title: '已生成100条测试数据',
+      icon: 'success'
+    })
   },
 
-
-  // 供按钮调用
-  onGenerateTestData: function () {
-    generateTestProducts();
-    this.loadProducts();
-    wx.showToast({ title: '已生成100条测试数据', icon: 'success' });
-  },
-
-  // 加载商品数据（首页只展示每个商品名一条，金额为最低价）
-  loadProducts: function () {
+  loadProducts() {
     try {
-      // 使用productService获取所有商品
-      const products = getAllProducts();
+      const products = getAllProducts()
+      const productMap = {}
 
-      // 按商品名分组，取每组最低价那条
-      const productMap = {};
       products.forEach(function (p) {
         if (!productMap[p.name] || Number(p.currentPrice) < Number(productMap[p.name].currentPrice)) {
-          productMap[p.name] = p;
+          productMap[p.name] = p
         }
-      });
+      })
 
-      // 只保留每个商品名最低价那条
-      const uniqueProducts = Object.values(productMap);
-
-      // 初始化swiping属性，避免渲染错误
+      const uniqueProducts = Object.values(productMap)
       uniqueProducts.forEach(item => {
-        item.swiping = false;
-        // 确保商品有货币符号
-        if (item.currency && item.currency.symbol) {
-          item.currencySymbol = item.currency.symbol;
-        } else {
-          item.currencySymbol = '¥';
+        item.swipingLeft = false
+        if (!item.currency || !item.currency.symbol) {
+          item.currencySymbol = '¥'
         }
-      });
+      })
 
-      // 根据当前排序方式排序
-      const sortedProducts = this.sortProductsByCurrentSortOption(uniqueProducts);
-
+      const sortedProducts = this.sortProductsByCurrentSortOption(uniqueProducts)
       this.setData({
         products: sortedProducts,
-        filteredProducts: sortedProducts.map(item => ({ ...item, swiping: false })) // 确保初始化
-      });
+        filteredProducts: sortedProducts
+      })
     } catch (error) {
-      console.error('加载商品数据失败:', error);
+      console.error('加载商品数据失败:', error)
     }
   },
 
-  // 首页不再需要优惠信息
-  // calculateProductDiscount: function (product) { return product; },
+  sortProductsByCurrentSortOption(products) {
+    if (!Array.isArray(products)) {
+      console.error('传入的商品列表无效')
+      return []
+    }
 
-  // 搜索功能
-  onSearchInput: function (e) {
-    this.setData({
-      searchKeyword: e.detail.value
-    });
-    this.filterProducts();
-  },
-
-  // 清除搜索
-  clearSearch: function () {
-    this.setData({
-      searchKeyword: ''
-    });
-    this.filterProducts();
-  },
-
-  // 选择推荐项
-  // selectCategory 已移除
-
-  // 筛选商品
-  filterProducts: function () {
     try {
-      const keyword = this.data.searchKeyword.trim();
+      let sorted = JSON.parse(JSON.stringify(products))
 
-      if (keyword === '') {
-        // 如果关键字为空，使用所有产品
-        this.setData({
-          filteredProducts: this.data.products
-        }, () => {
-          // 筛选后进行排序
-          this.sortProducts();
-        });
-      } else {
-        // 在当前已加载的产品中筛选，而不是重新从存储中获取所有产品
-        const filtered = this.data.products.filter(product =>
-          product.name.toLowerCase().includes(keyword.toLowerCase())
-        );
+      // 先按置顶状态分组
+      const pinnedProducts = sorted.filter(p => p.isPinned)
+      const unpinnedProducts = sorted.filter(p => !p.isPinned)
+
+      // 根据排序选项对每组商品进行排序
+      const sortFn = (a, b) => {
+        if (this.data.sortBy.includes('price')) {
+          const aPrice = Number(a.currentPrice) || 0
+          const bPrice = Number(b.currentPrice) || 0
+          return this.data.sortBy === 'priceAsc' ? aPrice - bPrice : bPrice - aPrice
+        } else {
+          const aDate = new Date(a.date).getTime()
+          const bDate = new Date(b.date).getTime()
+          return this.data.sortBy === 'dateAsc' ? aDate - bDate : bDate - aDate
+        }
+      }
+
+      pinnedProducts.sort(sortFn)
+      unpinnedProducts.sort(sortFn)
+
+      return [...pinnedProducts, ...unpinnedProducts]
+    } catch (error) {
+      console.error('排序商品失败:', error)
+      return products
+    }
+  },
+
+  onSearchInput(e) {
+    try {
+      const value = e.detail.value
+      this.setData({
+        searchKeyword: value || ''
+      }, () => {
+        this.filterProducts()
+      })
+    } catch (error) {
+      console.error('搜索输入处理失败:', error)
+    }
+  },
+
+  clearSearch() {
+    try {
+      this.setData({
+        searchKeyword: ''
+      }, () => {
+        this.filterProducts()
+      })
+    } catch (error) {
+      console.error('清除搜索失败:', error)
+    }
+  },
+
+  filterProducts() {
+    try {
+      const keyword = this.data.searchKeyword.trim()
+      let filtered = [...this.data.products]
+
+      if (keyword) {
+        // 搜索时仍保持置顶逻辑
+        filtered = filtered.filter(p => {
+          return p && p.name && p.name.toLowerCase().includes(keyword.toLowerCase())
+        })
+
+        // 先按置顶状态分组
+        const pinnedProducts = filtered.filter(p => p.isPinned)
+        const unpinnedProducts = filtered.filter(p => !p.isPinned)
+
+        // 分别对置顶和非置顶产品按日期排序
+        const sortByDate = (a, b) => {
+          const aDate = new Date(a.date).getTime()
+          const bDate = new Date(b.date).getTime()
+          return aDate - bDate  // 旧的日期在下方
+        }
+
+        pinnedProducts.sort(sortByDate)
+        unpinnedProducts.sort(sortByDate)
+
+        // 合并结果，确保置顶商品在顶部
+        filtered = [...pinnedProducts, ...unpinnedProducts]
+
+        // 确保每个产品都有必要的属性
+        filtered = filtered.map(item => ({
+          ...item,
+          swipingLeft: false,
+          currencySymbol: (item.currency && item.currency.symbol) || '¥'
+        }))
 
         this.setData({
           filteredProducts: filtered
-        }, () => {
-          // 筛选后进行排序
-          this.sortProducts();
-        });
+        })
+      } else {
+        // 没有搜索关键词时，恢复原有排序（包括置顶）
+        filtered = filtered.map(item => ({
+          ...item,
+          swipingLeft: false,
+          currencySymbol: (item.currency && item.currency.symbol) || '¥'
+        }))
+
+        const sorted = this.sortProductsByCurrentSortOption(filtered)
+        this.setData({
+          filteredProducts: sorted
+        })
       }
     } catch (error) {
-      console.error('筛选商品失败:', error);
+      console.error('筛选商品失败:', error)
+      // 出错时至少保证显示空列表
+      this.setData({
+        filteredProducts: []
+      })
     }
   },
 
-  // 切换筛选面板
-  toggleFilter: function () {
+  toggleFilter() {
     this.setData({
       showFilter: !this.data.showFilter
-    });
+    })
   },
 
-  // 设置排序选项
-  setSortOption: function (e) {
-    const sortBy = e.currentTarget.dataset.sort;
+  setSortOption(e) {
     this.setData({
-      sortBy: sortBy
-    });
-    this.sortProducts();
+      sortBy: e.currentTarget.dataset.sort
+    })
+    this.sortProducts()
   },
 
-  // 根据选择的排序方式对商品进行排序
-  sortProducts: function () {
+  sortProducts() {
     try {
-      const sortBy = this.data.sortBy;
-      // 使用服务层的排序功能，但保留UI相关处理（如swiping属性）
-      let sorted = this.sortProductsByCurrentSortOption([...this.data.filteredProducts]);
-
+      const sorted = this.sortProductsByCurrentSortOption([...this.data.filteredProducts])
       this.setData({
-        filteredProducts: sorted.map(item => ({ ...item, swiping: false })) // 确保初始化
-      });
+        filteredProducts: sorted
+      })
     } catch (error) {
-      console.error('排序商品失败:', error);
+      console.error('排序商品失败:', error)
     }
   },
 
-  // 根据当前排序选项对商品进行排序（抽取共享逻辑）
-  sortProductsByCurrentSortOption: function (products) {
-    try {
-      const sortBy = this.data.sortBy;
-      // 深复制确保不直接修改原始数据
-      let sorted = JSON.parse(JSON.stringify(products));
-
-      // 确保每个对象都有swiping属性
-      sorted.forEach(item => {
-        if (typeof item.swiping === 'undefined') {
-          item.swiping = false;
-        }
-      });
-
-      // 转换排序参数，使其与productService兼容
-      let field = 'date';
-      let ascending = false;
-
-      switch (sortBy) {
-        case 'priceAsc':
-          field = 'price';
-          ascending = true;
-          break;
-        case 'priceDesc':
-          field = 'price';
-          ascending = false;
-          break;
-        case 'dateAsc':
-          field = 'date';
-          ascending = true;
-          break;
-        case 'dateDesc':
-          field = 'date';
-          ascending = false;
-          break;
-        default:
-          field = 'date';
-          ascending = false;
-      }
-
-      // 使用productService中的排序功能
-      return sortProducts(sorted, field, ascending);
-    } catch (error) {
-      console.error('排序商品失败:', error);
-      return products; // 失败时返回原数据
-    }
-  },
-
-  // 跳转到添加页面
-  goToAdd: function () {
-    wx.switchTab({
-      url: '/pages/add/add'
-    });
-  },
-
-  // 跳转到详情页面
-  goToDetail: function (e) {
-    try {
-      const index = e.currentTarget.dataset.index;
-      const product = this.data.filteredProducts[index];
-
-      // 确保产品存在且没有处于滑动状态
-      if (product && !product.swiping) {
-        // 使用fieldService查询该商品名称的记录数量
-        const recordCount = getRecordCountByProductName(product.name);
-
-        // 如果只有一条记录，提示用户添加更多记录
-        if (recordCount <= 1) {
-          wx.showToast({
-            title: '请添加更多记录后查看',
-            icon: 'none',
-            duration: 2000
-          });
-          return;
-        }
-
-        // 跳转到详情页
-        wx.navigateTo({
-          url: '/pages/detail/detail?id=' + product.id
-        });
-      }
-    } catch (error) {
-      console.error('跳转详情页失败:', error);
-    }
-  },
-
-  // 触摸开始
-  onTouchStart: function (e) {
-    var touch = e.touches[0];
+  onTouchStart(e) {
     this.setData({
-      touchStartX: touch.clientX,
-      touchStartY: touch.clientY
-    });
+      touchStartX: e.touches[0].clientX,
+      currentSwipeIndex: -1
+    })
   },
 
-  // 触摸移动
-  onTouchMove: function (e) {
-    var touch = e.touches[0];
-    var deltaX = touch.clientX - this.data.touchStartX;
-    var deltaY = touch.clientY - this.data.touchStartY;
+  onTouchMove(e) {
+    try {
+      const touch = e.touches[0]
+      const deltaX = touch.clientX - this.data.touchStartX
 
-    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
-      var index = e.currentTarget.dataset.index;
-      // 先深复制一份数据，避免直接修改引用
-      var products = JSON.parse(JSON.stringify(this.data.filteredProducts));
+      if (Math.abs(deltaX) > 5) {
+        const index = e.currentTarget.dataset.index
+        const products = JSON.parse(JSON.stringify(this.data.filteredProducts))
 
-      // 确保每个产品对象都有swiping属性
-      products.forEach((item, idx) => {
-        if (typeof item.swiping === 'undefined') {
-          item.swiping = false;
-        }
-      });
+        // 重置其他卡片的状态
+        products.forEach((item, idx) => {
+          if (idx !== index) {
+            item.swipingLeft = false
+          }
+        })
 
-      if (deltaX < -30) {
-        // 向左滑动，显示删除按钮
-        for (var i = 0; i < products.length; i++) {
-          products[i].swiping = (i === index);
-        }
+        // 设置当前卡片的滑动状态
+        products[index].swipingLeft = deltaX < 0
+
         this.setData({
           filteredProducts: products,
           currentSwipeIndex: index
-        });
-      } else if (deltaX > 30) {
-        // 向右滑动，隐藏删除按钮
-        if (products[index]) {
-          products[index].swiping = false;
+        })
+
+        if (Math.abs(deltaX) > 10) {
+          return false
         }
-        this.setData({
-          filteredProducts: products,
-          currentSwipeIndex: -1
-        });
       }
+    } catch (error) {
+      console.error('处理滑动事件失败:', error)
     }
   },
 
-  // 触摸结束
-  onTouchEnd: function (e) {
-    // 空函数，保持接口完整
+  onTouchEnd(e) {
+    try {
+      if (this.data.currentSwipeIndex === -1) return
+
+      const touch = e.changedTouches[0]
+      const deltaX = touch.clientX - this.data.touchStartX
+      const index = this.data.currentSwipeIndex
+      const products = JSON.parse(JSON.stringify(this.data.filteredProducts))
+
+      if (deltaX > -60) {
+        products[index].swipingLeft = false
+      }
+
+      // 使用回调确保状态更新完成
+      this.setData({
+        filteredProducts: products
+      }, () => {
+        // 延迟重置 currentSwipeIndex，确保动画完成
+        setTimeout(() => {
+          this.setData({
+            currentSwipeIndex: -1
+          })
+        }, 100)
+      })
+    } catch (error) {
+      console.error('触摸结束时发生错误:', error)
+      // 发生错误时也要重置状态
+      this.setData({
+        currentSwipeIndex: -1
+      })
+    }
   },
 
-  // 删除商品
-  deleteProduct: function (e) {
+  togglePin(e) {
     try {
-      const index = e.currentTarget.dataset.index;
-      const product = this.data.filteredProducts[index];
+      const index = e.currentTarget.dataset.index
+      const product = this.data.filteredProducts[index]
+      if (!product) return
 
-      if (!product) return;
+      const products = getAllProducts()
+      const name = product.name
 
-      const name = product.name;
+      products.forEach(p => {
+        if (p.name === name) {
+          p.isPinned = !p.isPinned
+        }
+      })
+
+      saveAllProducts(products)
+      this.loadProducts()
+
+      wx.showToast({
+        title: product.isPinned ? '已取消置顶' : '已置顶',
+        icon: 'success'
+      })
+    } catch (error) {
+      console.error('切换置顶状态失败:', error)
+    }
+  },
+
+  deleteProduct(e) {
+    try {
+      const index = e.currentTarget.dataset.index
+      const product = this.data.filteredProducts[index]
+      if (!product) return
 
       wx.showModal({
         title: '确认删除',
-        content: '确定要删除所有"' + name + '"相关的商品吗？',
+        content: '确定要删除所有"' + product.name + '"相关的商品吗？',
         success: (res) => {
           if (res.confirm) {
-            // 使用productService删除同名商品
-            const products = getAllProducts();
+            const products = getAllProducts()
             products.forEach(p => {
-              if (p.name === name) {
-                deleteProduct(p.id);
+              if (p.name === product.name) {
+                deleteProduct(p.id)
               }
-            });
-
-            // 重新加载产品列表
-            this.loadProducts();
-
+            })
+            this.loadProducts()
             wx.showToast({
               title: '删除成功',
               icon: 'success'
-            });
+            })
           }
         }
-      });
+      })
     } catch (error) {
-      console.error('删除商品失败:', error);
+      console.error('删除商品失败:', error)
     }
   },
 
-  // 下拉刷新
-  onPullDownRefresh: function () {
-    this.loadProducts();
-    wx.stopPullDownRefresh();
+  goToDetail(e) {
+    try {
+      // 如果正在滑动，则不触发跳转
+      if (this.data.currentSwipeIndex !== -1) {
+        return
+      }
+
+      const index = e.currentTarget.dataset.index
+      const product = this.data.filteredProducts[index]
+      if (!product || !product.id) {
+        console.error('无效的商品数据:', product)
+        return
+      }
+
+      // 重置所有卡片的滑动状态
+      const products = this.data.filteredProducts.map(p => ({
+        ...p,
+        swipingLeft: false
+      }))
+
+      this.setData({
+        filteredProducts: products
+      }, () => {
+        wx.navigateTo({
+          url: `/pages/detail/detail?id=${encodeURIComponent(product.id)}`
+        })
+      })
+    } catch (error) {
+      console.error('跳转到详情页失败:', error)
+      wx.showToast({
+        title: '跳转失败',
+        icon: 'error'
+      })
+    }
+  },
+
+  goToAdd() {
+    wx.reLaunch({
+      url: '/pages/add/add'
+    })
+  },
+
+  onPullDownRefresh() {
+    this.loadProducts()
+    wx.stopPullDownRefresh()
   }
-});
+})

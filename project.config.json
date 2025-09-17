@@ -1,0 +1,7 @@
+{
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
+  "setting": {
+    "enhance": true,
+    "es6": true
+  }
+}
